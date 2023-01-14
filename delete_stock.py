@@ -3,7 +3,7 @@ import re,time
 import datetime,os
 
 def delete(dates):
-	conn = mysql.connector.connect(user='root',password='password',database='test')
+	conn = mysql.connector.connect(user='root',password='abc123',database='test')
 	cursor = conn.cursor()
 
 	cursor.execute('select code from allstock')

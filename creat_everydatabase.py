@@ -5,22 +5,31 @@ import re,time
 #想要写入哪一段时间的数据只需要修改starttime,endtime的时间就可以了
 def everdate(starttime,endtime):
 	#获取所有有股票
-	stock_info = ts.get_stock_basics()
+	pro = ts.pro_api()
+	stock_info = pro.stock_basic()
 	#连接数据库
-	conn = mysql.connector.connect(user='root',password='password',database='test')
+	conn = mysql.connector.connect(user='root',password='abc123',database='test')
 	cursor = conn.cursor()
+	cursor.execute('use test;')
+	cursor.execute('show tables;')
+	result = cursor.fetchall()
+	print(result)
 
-	codes = stock_info.index
 	a = 0
 	#通过for循环以及获取A股只数来遍历每一只股票
 	for x in range(0,len(stock_info)):
 		#匹配深圳股票（因为整个A股太多，所以我选择深圳股票做个筛选）
-		if re.match('000',codes[x]) or re.match('002',codes[x]):
+		stock_data = stock_info.values[x]
+		code = stock_data[1]
+		if re.match('000',code) or re.match('002',code):
 			#以stock_加股票代码为表名称创建表格
-			cursor.execute('create table stock_' + codes[x] + ' (date varchar(32),open varchar(32),close varchar(32),high varchar(32),low varchar(32),volume varchar(32),p_change varchar(32),unique(date))')
+			sqlCmd = 'create table stock_' + code + ' (date varchar(32),open varchar(32),close varchar(32),high varchar(32),low varchar(32),volume varchar(32),p_change varchar(32),unique(date))'
+			print(sqlCmd)
+
+			cursor.execute(sqlCmd)
 			#利用tushare包获取单只股票的阶段性行情
-			df = ts.get_hist_data(codes[x],starttime,endtime)
-			print('%s的表格创建完成'%codes[x])
+			df = ts.get_hist_data(code,starttime,endtime)
+			print('%s的表格创建完成'%code)
 			a += 1
 			#这里使用try，except的目的是为了防止一些停牌的股票，获取数据为空，插入数据库的时候失败而报错
 			#再使用for循环遍历单只股票每一天的行情
@@ -30,14 +39,14 @@ def everdate(starttime,endtime):
 					times = time.strptime(df.index[i],'%Y-%m-%d')
 					time_new = time.strftime('%Y%m%d',times)
 					#插入每一天的行情
-					cursor.execute('insert into stock_'+codes[x]+ ' (date,open,close,high,low,volume,p_change) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[i],df.close[i],df.high[i],df.low[i],df.volume[i],df.p_change[i]))
+					cursor.execute('insert into stock_'+code+ ' (date,open,close,high,low,volume,p_change) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[i],df.close[i],df.high[i],df.low[i],df.volume[i],df.p_change[i]))
 					
 			except:
-				print('%s这股票目前停牌'%codes[x])
+				print('%s这股票目前停牌'%code)
 
 	conn.close()
 	cursor.close()
 	#统计总共插入了多少张表的数据
 	print('所有股票总共插入数据库%d张表格'%a)
 
-everdate('2018-01-01','2018-03-14')
+everdate('2023-01-01','2023-01-13')

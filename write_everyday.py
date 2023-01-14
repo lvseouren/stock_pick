@@ -10,7 +10,7 @@ def everystock():
 	#获取股票代码列
 	codes = stock_info.index
 	#连接数据库
-	conn = mysql.connector.connect(user='root',password='password',database='test')
+	conn = mysql.connector.connect(user='root',password='abc123',database='test')
 	cursor = conn.cursor()
 	#获取当前时间
 	new_time = time.strftime('%Y-%m-%d')
@@ -33,7 +33,7 @@ def everystock():
 		except:
 			print('%s无行情或者数据库已经存在当天的数据'%codes[x])
 	#统计当天插入数据库的股票数量
-	dir_log = 'D:\\python\\work\\stock\\WD\\run\log\\'
+	dir_log = 'H:\\GitRoot\\stock_pick\\log\\'
 	filename = dir_log + new_time +'.log'
 	flog = open(filename,'w')
 	flog.write('今天的行情插入完成%s条'%a)

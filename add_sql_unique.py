@@ -4,7 +4,7 @@ import datetime,os
 
 #因为之前创建表格的时候没加唯一性约束，容易插入重复的数据，导致最后计算记过不准确，所以穿件一个函数给之前没加约束的加上去
 def addunique():
-	conn = mysql.connector.connect(user='root',password='password',database='test')
+	conn = mysql.connector.connect(user='root',password='abc123',database='test')
 	cursor = conn.cursor()
 
 	cursor.execute('select code from allstock')

@@ -8,13 +8,13 @@ def rate(todays):
 	print(todays)
 	#将满足阳包阴的这些股票，以及它们之前满足的时候收益率都写到报告里面方便查看整体情况
 	count,a = find_stock.valid_stock(todays)
-	dir_repor = 'D:\\python\\work\\stock\\WD\\run\\report\\'
+	dir_repor = 'H:\\GitRoot\\stock_pick\\report\\'
 	filename = dir_repor + todays +'.txt'	
 	fp = open(filename,'w')
 	fp.write('总共找到%d支满足条件的股票分别是\n%s\n'%(a,count))
 
 	#连接数据库
-	conn = mysql.connector.connect(user='root',password='password',database='test')
+	conn = mysql.connector.connect(user='root',password='abc123',database='test')
 	cursor = conn.cursor()
 	#遍历满足条件的这些股票
 	for x in count:

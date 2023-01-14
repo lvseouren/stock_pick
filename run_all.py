@@ -1,6 +1,7 @@
 #总的运行文件，实现将统计报告发送邮件到自己的邮箱，将这个文件放到Jenkin上每个交易日下午3点之后运行就可以收到当天满足行情的股票了
 import win_rates
 import write_everyday
+import creat_everydatabase
 import time
 import os
 import smtplib
@@ -23,11 +24,11 @@ def send_email():
 	f.close()
 	#设置自己邮件服务器和账号密码
 	smtpserver = 'smtp.163.com'
-	user = '17665324876@163.com'
-	password = 'xxxxx'
+	user = 'huiseouren@163.com'
+	password = 'abc123'
 	#设置接收邮箱和主题
 	sender = user
-	receiver = '497051142@qq.com'
+	receiver = '602633512@qq.com'
 	subject = '今天的股票行情来啦'
 	
 	msg = MIMEMultipart('mixed')
@@ -51,7 +52,7 @@ if __name__ == '__main__':
 	#初始化tshare
 	ts.set_token('ed4a03d581a87d8a6f95cf1f06d31bec659d785e9bf410008fe91493')
 
-	test_report_dir = 'D:\\python\\work\\stock\\WD\\run\\report\\'
+	test_report_dir = 'H:\\GitRoot\\stock_pick\\report\\'
 	#如果执行的不是当天的日期的话请将第一个todays注释掉
 	todays = time.strftime('%Y-%m-%d')
 #	todays = '2018-03-14'
