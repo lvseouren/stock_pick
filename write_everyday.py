@@ -5,7 +5,8 @@ import re,time
 #每天行情出来了之后，插入当天的行情到每支股票的每个表格中
 def everystock():
 	#获取所有股票列表
-	stock_info = ts.get_stock_basics()
+	pro = ts.pro_api()
+	stock_info = pro.stock_basic()
 	#获取股票代码列
 	codes = stock_info.index
 	#连接数据库

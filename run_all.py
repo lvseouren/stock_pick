@@ -7,6 +7,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
+import tushare as ts
 
 #获取最新的文件
 def new_file(test_report_dir):
@@ -47,6 +48,9 @@ def send_email():
 	smtp.quit()
 
 if __name__ == '__main__':
+	#初始化tshare
+	ts.set_token('ed4a03d581a87d8a6f95cf1f06d31bec659d785e9bf410008fe91493')
+
 	test_report_dir = 'D:\\python\\work\\stock\\WD\\run\\report\\'
 	#如果执行的不是当天的日期的话请将第一个todays注释掉
 	todays = time.strftime('%Y-%m-%d')
