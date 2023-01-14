@@ -9,7 +9,11 @@ stock_info = pro.stock_basic()
 conn = mysql.connector.connect(user='root',password='abc123',database='test')
 cursor = conn.cursor()
 
-codes = stock_info.index
+sqlCmd = 'create table allstock (code varchar(32),name varchar(32),industry varchar(32),area varchar(32),unique(code))'
+print(sqlCmd)
+
+cursor.execute(sqlCmd)
+codes = stock_info.symbol
 names = stock_info.name
 industrys = stock_info.industry
 areas = stock_info.area
