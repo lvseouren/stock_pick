@@ -1,6 +1,7 @@
 import tushare as ts
 import mysql.connector
 import re,time
+import constants
 #创建所有股票的表格以及插入每支股票的近段时间的行情，这个文件只需要执行一次！！！
 #想要写入哪一段时间的数据只需要修改starttime,endtime的时间就可以了
 def everdate(starttime,endtime):
@@ -8,7 +9,7 @@ def everdate(starttime,endtime):
 	pro = ts.pro_api()
 	stock_info = pro.stock_basic()
 	#连接数据库
-	conn = mysql.connector.connect(user='root',password='abc123',database='test')
+	conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password, database=constants.mysql_database_name)
 	cursor = conn.cursor()
 	cursor.execute('use test;')
 	cursor.execute('show tables;')

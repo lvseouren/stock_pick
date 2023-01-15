@@ -1,20 +1,19 @@
 #这个文件可以联合find_stock单独运行，输入todays的日期可以直接查找当天出现过的股票
 import mysql.connector
-import re,time
-import datetime
+import constants
 import find_stock
 #统计当天满足阳包阴所有股票，在设置的这段时间里面有没有出现过类似的行情，并且计算如果出现过，那么那天之后的5天收益率是多少
 def rate(todays):
 	print(todays)
 	#将满足阳包阴的这些股票，以及它们之前满足的时候收益率都写到报告里面方便查看整体情况
 	count,a = find_stock.valid_stock(todays)
-	dir_repor = 'H:\\GitRoot\\stock_pick\\report\\'
+	dir_repor = constants.report_dir
 	filename = dir_repor + todays +'.txt'	
 	fp = open(filename,'w')
 	fp.write('总共找到%d支满足条件的股票分别是\n%s\n'%(a,count))
 
 	#连接数据库
-	conn = mysql.connector.connect(user='root',password='abc123',database='test')
+	conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password, database=constants.mysql_database_name)
 	cursor = conn.cursor()
 	#遍历满足条件的这些股票
 	for x in count:

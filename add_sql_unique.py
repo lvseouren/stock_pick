@@ -1,10 +1,10 @@
 import mysql.connector
 import re,time
-import datetime,os
+import constants
 
 #因为之前创建表格的时候没加唯一性约束，容易插入重复的数据，导致最后计算记过不准确，所以穿件一个函数给之前没加约束的加上去
 def addunique():
-	conn = mysql.connector.connect(user='root',password='abc123',database='test')
+	conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password, database=constants.mysql_database_name)
 	cursor = conn.cursor()
 
 	cursor.execute('select code from allstock')

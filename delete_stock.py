@@ -1,9 +1,10 @@
 import mysql.connector
 import re,time
 import datetime,os
+import constants
 
 def delete(dates):
-	conn = mysql.connector.connect(user='root',password='abc123',database='test')
+	conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password, database=constants.mysql_database_name)
 	cursor = conn.cursor()
 
 	cursor.execute('select code from allstock')

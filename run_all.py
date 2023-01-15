@@ -1,4 +1,5 @@
 #总的运行文件，实现将统计报告发送邮件到自己的邮箱，将这个文件放到Jenkin上每个交易日下午3点之后运行就可以收到当天满足行情的股票了
+import constants
 import win_rates
 import write_everyday
 import time
@@ -53,7 +54,7 @@ if __name__ == '__main__':
 	#初始化tshare
 	ts.set_token('ed4a03d581a87d8a6f95cf1f06d31bec659d785e9bf410008fe91493')
 
-	test_report_dir = 'H:\\GitRoot\\stock_pick\\report\\'
+	test_report_dir = constants.report_dir
 	#如果执行的不是当天的日期的话请将第一个todays注释掉
 	todays = time.strftime('%Y-%m-%d')
 #	todays = '2018-03-14'

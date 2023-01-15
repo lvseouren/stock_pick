@@ -2,6 +2,7 @@
 import tushare as ts
 import mysql.connector
 import re,time
+import constants
 #每天行情出来了之后，插入当天的行情到每支股票的每个表格中
 def everystock():
 	#获取所有股票列表
@@ -10,7 +11,7 @@ def everystock():
 	#获取股票代码列
 	codes = stock_info.index
 	#连接数据库
-	conn = mysql.connector.connect(user='root',password='abc123',database='test')
+	conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password, database=constants.mysql_database_name)
 	cursor = conn.cursor()
 	#获取当前时间
 	new_time = time.strftime('%Y-%m-%d')
@@ -25,7 +26,7 @@ def everystock():
 				#将时间转换格式
 				times = time.strptime(new_time,'%Y-%m-%d')
 				time_new = time.strftime('%Y%m%d',times)
-#				#将当天的行情插入数据库
+				#将当天的行情插入数据库
 				cursor.execute('insert into stock_'+codes[x]+ ' (date,open,close,high,low,volume,p_change) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[0],df.close[0],df.high[0],df.low[0],df.volume[0],df.p_change[0]))
 				
 				print('%s的数据插入完成'%codes[x])
@@ -33,11 +34,11 @@ def everystock():
 		except:
 			print('%s无行情或者数据库已经存在当天的数据'%codes[x])
 	#统计当天插入数据库的股票数量
-	dir_log = 'H:\\GitRoot\\stock_pick\\log\\'
+	dir_log = constants.log_dir
 	filename = dir_log + new_time +'.log'
 	flog = open(filename,'w')
 	flog.write('今天的行情插入完成%s条'%a)
-#	print('今天的行情插入完成%s条'%a)
+	#print('今天的行情插入完成%s条'%a)
 	flog.close()
 	conn.commit()
 	conn.close()
