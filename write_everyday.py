@@ -9,25 +9,31 @@ def everystock():
 	pro = ts.pro_api()
 	stock_info = pro.stock_basic()
 	#获取股票代码列
-	codes = stock_info.index
+	codes = stock_info.symbol
 	#连接数据库
 	conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password, database=constants.mysql_database_name)
 	cursor = conn.cursor()
 	#获取当前时间
-	new_time = time.strftime('%Y-%m-%d')
-	#new_time = '2018-03-13'
+	#new_time = time.strftime('%Y-%m-%d')
+	new_time = '2023-01-13'
+	# end_time = '2023-01-13'
 	a = 0
+
+	# test = ts.get_today_all()
+
 	##使用for循环遍历所有的股票
 	for x in range(0,len(stock_info)):
 		try:
 			if re.match('000',codes[x]) or re.match('002',codes[x]):
 				#获取单只股票当天的行情
-				df = ts.get_hist_data(codes[x],new_time,new_time)
+				code = codes[x]
+				df = ts.get_hist_data(code, start=new_time,end=new_time)
 				#将时间转换格式
 				times = time.strptime(new_time,'%Y-%m-%d')
 				time_new = time.strftime('%Y%m%d',times)
 				#将当天的行情插入数据库
-				cursor.execute('insert into stock_'+codes[x]+ ' (date,open,close,high,low,volume,p_change) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[0],df.close[0],df.high[0],df.low[0],df.volume[0],df.p_change[0]))
+				mysqlCmd = 'insert into stock_'+codes[x]+ ' (date,open,close,high,low,volume,p_change) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[0],df.close[0],df.high[0],df.low[0],df.volume[0],df.p_change[0])
+				cursor.execute(mysqlCmd)
 				
 				print('%s的数据插入完成'%codes[x])
 				a += 1
