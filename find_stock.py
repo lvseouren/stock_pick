@@ -2,6 +2,8 @@ import mysql.connector
 import re,time
 import datetime,os
 import constants
+import tushare as ts
+
 #从数据库获取股票数据，统计想要查找日期的满足阳包阴并且当天涨停的股票
 def valid_stock(dates):
 	# return yangbaoying(dates)
@@ -92,11 +94,17 @@ def twoyang(dates):
 
 	# 先将字符串格式的时间转换为时间格式才能计算昨天的日期
 	now = datetime.date(*map(int, dates.split('-')))
-	oneday = datetime.timedelta(days=1)
-	yestody = str(now - oneday)
-	# 将昨天日期转换为规定的字符串格式
-	times = time.strptime(yestody, '%Y-%m-%d')
-	str_yestoday = time.strftime('%Y%m%d', times)
+	# oneday = datetime.timedelta(days=1)
+	# yestody = str(now - oneday)
+	# # 将昨天日期转换为规定的字符串格式
+	# times = time.strptime(yestody, '%Y-%m-%d')
+	# str_yestoday = time.strftime('%Y%m%d', times)
+	str_yestoday = get_pre_trade_day(now)
+	times = time.strptime(str_yestoday, '%Y%m%d')
+	yestoday = time.strftime('%Y-%m-%d', times)
+	yestoday = datetime.date(*map(int, yestoday.split('-')))
+	str_theday_before_yestoday = get_pre_trade_day(yestoday)
+
 	flog.write('执行的时间前一天是%s\n' % str_yestoday)
 	# 将想要查找的日期转换为规定的字符串格式
 	str_today = time.strptime(dates, '%Y-%m-%d')
@@ -129,18 +137,19 @@ def twoyang(dates):
 				close1 = float(value[0][2])
 				# 今天的涨幅
 				p_change1 = float(value[0][6])
+				volume1 = float(value[0][5])
 				# 昨天的。。。。。
 				opens2 = float(value[1][1])
 				close2 = float(value[1][2])
-				p_change2 = float(value[1][6])
+				volume2 = float(value[1][5])
 
-				if isSatisfy_twoyang(opens1, close1, opens2, close2, p_change1, p_change2):
+				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1):
 					flog.write('%s票%s的开盘价是%s\n' % (value_code[i][0], today, opens1))
 					flog.write('%s票%s的收盘价是%s\n' % (value_code[i][0], today, close1))
-					flog.write('%s票%s的涨幅是%s\n' % (value_code[i][0], today, p_change1))
+					flog.write('%s票%s的成交量是%s\n' % (value_code[i][0], today, volume1))
 					flog.write('%s票%s的开盘价是%s\n' % (value_code[i][0], str_yestoday, opens2))
 					flog.write('%s票%s的收盘价价是%s\n' % (value_code[i][0], str_yestoday, close2))
-					flog.write('%s票%s的涨幅是%s\n' % (value_code[i][0], str_yestoday, p_change2))
+					flog.write('%s票%s的成交量是%s\n' % (value_code[i][0], str_yestoday, volume2))
 					# 将满足条件的股票代码放进列表中，统计当天满足条件的股票
 					count.append(value_code[i][0])
 					a += 1
@@ -158,7 +167,28 @@ def twoyang(dates):
 
 
 # 2是昨天，1是今天
-def isSatisfy_twoyang(opens1, close1, opens2, close2, p_change1, p_change2):
-	return close1 > close2 and close2 > opens2 and close1 > opens1 and p_change1 > p_change2 and p_change1 > 2
+def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1):
+	return close1 > close2 and close2 > opens2 and close1 > opens1 and volume1 > volume2 and p_change1 > 2
+
+def get_pre_trade_day(now):
+	is_find = False
+	ret = now
+	oneday = datetime.timedelta(days=1)
+	while not is_find:
+		yestodayDate = now - oneday
+		yestody = str(yestodayDate)
+		# 将昨天日期转换为规定的字符串格式
+		times = time.strptime(yestody, '%Y-%m-%d')
+		str_yestoday = time.strftime('%Y%m%d', times)
+		if is_trade_day(str_yestoday):
+			is_find = True
+			ret = str_yestoday
+		now = yestodayDate
+	return ret
+def is_trade_day(date):
+	pro = ts.pro_api()
+	df = pro.trade_cal(exchange='', start_date=date, end_date=date)
+	value = df.is_open[0]
+	return value == 1
 
 #valid_stock('2018-3-1')

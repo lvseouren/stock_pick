@@ -1,7 +1,7 @@
 #总的运行文件，实现将统计报告发送邮件到自己的邮箱，将这个文件放到Jenkin上每个交易日下午3点之后运行就可以收到当天满足行情的股票了
 import constants
 import win_rates
-import write_everyday
+# import write_everyday
 import time
 import os
 import smtplib
@@ -57,9 +57,9 @@ if __name__ == '__main__':
 	test_report_dir = constants.report_dir
 	#如果执行的不是当天的日期的话请将第一个todays注释掉
 	todays = time.strftime('%Y-%m-%d')
-#	todays = '2018-03-14'
+	# todays = '2023-01-17'
 	#如果不是交易日执行的话write_everyday会报错，会报tushare获取不到行情，所以请手动输入日期并将下面一行注释掉
-	write_everyday.everystock()
+	# write_everyday.everystock()
 	time.sleep(3)
 	win_rates.rate(todays)
 	
