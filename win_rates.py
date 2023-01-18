@@ -22,26 +22,36 @@ def rate(todays):
 		value = cursor.fetchall()
 	#	print(value)
 		for i in range(0,len(value)):  #遍历这支股票的所有天数
+			total_3yang_times = 0
+			total_3yang_win_times = 0
+			winrate = -1
 			try:
 				dates = value[i][0]
-				opens2 = float(value[i][1])  #第i行的第一列
-				opens1 = float(value[i+1][1])
-				close2 = float(value[i][2])  #第i行的第二列
-				close1 = float(value[i+1][2]) 
-				p_change1 = float(value[i+1][6])  #第i行的第六列
-				p_change2 = float(value[i][6])
-				if opens2<close1 and close2>opens1 and p_change1<-2 and p_change2>9.8:
-					#这一句很重要，就是在出现阳包阴之后得有5天的数据区统计，否则就会变成-5就会从开始统计的那天去取数据，结果就导致当天的这些股票统计收益的时候也有不过都是错的
-					if i-6>0:
-						#收益率
-						wins = (float(value[i-6][2])-float(value[i-1][1]))/float(value[i-1][1])*100
-						print('%s的%s之后5天收率为百分之%d'%(x,dates,wins))
-						fp.write('%s在%s之后5天收率为百分之%d\n'%(x,dates,wins))
-					else:
-						fp.write('%s在%s之前没有满足条件的行情\n'%(x,dates))
+				opens1 = float(value[i][1])  #第i行的第一列
+				opens2 = float(value[i+1][1])
+				opens3 = float(value[i+2][1])
+				close1 = float(value[i][2])  #第i行的第二列
+				close2 = float(value[i+1][2])
+				close3 = float(value[i+2][1])
+				p_change1 = float(value[i][6])
+				p_change2 = float(value[i+1][6])  #第i行的第六列
+				p_change3 = float(value[i+2][6])
+				high4 = float[value[i+3][3]]
+
+				if find_stock.isSatisfy_twoyang(opens1, close1, opens2, close2, p_change1, p_change2):
+					if find_stock.isSatisfy_twoyang(opens2, close2, opens3, close3, p_change2, p_change3):
+						total_3yang_times+=1
+						if high4 > close3:
+							total_3yang_win_times+=1
+
 			except:
+				if total_3yang_times > 0:
+					winrate = total_3yang_win_times/total_3yang_times
 				pass
 	#			print('%s前3个月无满足条件的情况'%x)
+			if total_3yang_times > 0:
+				winrate = total_3yang_win_times / total_3yang_times
+		fp.write('%s在%s之前胜率为%d\n'%(x,dates,winrate))
 	fp.close()
 	conn.close()
 	cursor.close()
