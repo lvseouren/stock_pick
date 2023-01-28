@@ -22,7 +22,7 @@ def everdate(starttime,endtime):
 		#匹配深圳股票（因为整个A股太多，所以我选择深圳股票做个筛选）
 		stock_data = stock_info.values[x]
 		code = stock_data[1]
-		if re.match('000',code) or re.match('002',code):
+		if constants.stock_filter_all(code):
 			#以stock_加股票代码为表名称创建表格
 			sqlCmd = 'create table stock_' + code + ' (date varchar(32),open varchar(32),close varchar(32),high varchar(32),low varchar(32),volume varchar(32),p_change varchar(32),unique(date))'
 			print(sqlCmd)
