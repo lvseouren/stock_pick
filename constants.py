@@ -13,6 +13,8 @@ log_dir = os.getcwd() + '\\log\\'
 
 ts_inited = False
 
+strict_level = 1
+
 def try_init_ts():
     if not ts_inited:
         ts.set_token('ed4a03d581a87d8a6f95cf1f06d31bec659d785e9bf410008fe91493')

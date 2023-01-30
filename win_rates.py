@@ -6,11 +6,15 @@ import find_stock
 def rate(todays):
 	print(todays)
 	#将满足阳包阴的这些股票，以及它们之前满足的时候收益率都写到报告里面方便查看整体情况
-	count,a = find_stock.valid_stock(todays)
+	count,a,count2 = find_stock.valid_stock(todays)
 	dir_repor = constants.report_dir
-	filename = dir_repor + todays +'.txt'	
+	filename = dir_repor + todays +'.txt'
 	fp = open(filename,'w')
 	fp.write('总共找到%d支满足条件的股票分别是\n%s\n'%(a,count))
+	filename2 = dir_repor + todays + '_extra.txt'
+	fp2 = open(filename2, 'w')
+	fp2.write('总共找到%d支满足条件的股票分别是\n%s\n'%(a,count2))
+	fp2.close()
 
 	#连接数据库
 	conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password, database=constants.mysql_database_name)

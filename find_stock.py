@@ -119,6 +119,7 @@ def twoyang(dates):
 	value_code = cursor.fetchall()
 	a = 0
 	count = []
+	count_3yang = []
 	# 遍历所有股票
 	for i in range(0, len(value_code)):
 		code = value_code[i][0]
@@ -127,8 +128,8 @@ def twoyang(dates):
 			# 查询所有匹配到的股票，将今天与昨天的数据对比
 			try:
 				cursor.execute(
-					'select * from stock_' + code + ' where date=%s or date =%s order by date desc' % (
-						today, str_yestoday))  # 当天
+					'select * from stock_' + code + ' where date=%s or date =%s or date =%s order by date desc' % (
+						today, str_yestoday, str_theday_before_yestoday))  # 当天
 				# cursor.execute('select * from stock_'+ value_code[i][0]+ ' where date=%s or date =%s'%('20180315','20180314'))
 				value = cursor.fetchall()
 
@@ -146,16 +147,26 @@ def twoyang(dates):
 				volume2 = float(value[1][5])
 				p_change2 = float(value[1][6])
 
+				# 前天的。。。。。
+				opens3 = float(value[2][1])
+				close3 = float(value[2][2])
+				volume3 = float(value[2][5])
+				p_change3 = float(value[2][6])
+
 				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2):
-					flog.write('%s票%s的开盘价是%s\n' % (value_code[i][0], today, opens1))
-					flog.write('%s票%s的收盘价是%s\n' % (value_code[i][0], today, close1))
-					flog.write('%s票%s的成交量是%s\n' % (value_code[i][0], today, volume1))
-					flog.write('%s票%s的开盘价是%s\n' % (value_code[i][0], str_yestoday, opens2))
-					flog.write('%s票%s的收盘价价是%s\n' % (value_code[i][0], str_yestoday, close2))
-					flog.write('%s票%s的成交量是%s\n' % (value_code[i][0], str_yestoday, volume2))
-					# 将满足条件的股票代码放进列表中，统计当天满足条件的股票
-					count.append(value_code[i][0])
-					a += 1
+					if not isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2, p_change3):
+						flog.write('%s票%s的开盘价是%s\n' % (code, today, opens1))
+						flog.write('%s票%s的收盘价是%s\n' % (code, today, close1))
+						flog.write('%s票%s的成交量是%s\n' % (code, today, volume1))
+						flog.write('%s票%s的开盘价是%s\n' % (code, str_yestoday, opens2))
+						flog.write('%s票%s的收盘价价是%s\n' % (code, str_yestoday, close2))
+						flog.write('%s票%s的成交量是%s\n' % (code, str_yestoday, volume2))
+						# 将满足条件的股票代码放进列表中，统计当天满足条件的股票
+						count.append(code)
+						a += 1
+					else:
+						# 3yang了
+						count_3yang.append(code)
 			except:
 				# 之前有次sql语句出错了，order by后面没加date，每次寻找都是0支，找了半个多小时才找出来是sql语句的问题
 				f_err_log.write(
@@ -166,12 +177,19 @@ def twoyang(dates):
 	f_err_log.close()
 	conn.close()
 	cursor.close()
-	return count, a
+	return count, a, count_3yang
+
+# 1今天2昨天3前天
+def isSatisfy_3yang(open1, close1, volume1, p_change1, open2, close2, volume2, p_change2, open3, close3, volume3, p_change3):
+	return isSatisfy_twoyang(open1, close1, open2, close2, volume1, volume2, p_change1, p_change2) and isSatisfy_twoyang(open2, close2, open3, close3, volume2, volume3, p_change2, p_change3)
 
 
 # 2是昨天，1是今天
 def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2):
-	return p_change2 > 0 and close1 > close2 and close2 > opens2 and close1 > opens1 and volume1 > volume2 and p_change1 > 2
+	ret = p_change2 > 0 and close1 > close2 and close2 > opens2 and close1 > opens1 and volume1 > volume2 and p_change1 > 2
+	if constants.strict_level > 1:
+		ret = ret and p_change1 <=5
+	return ret
 
 def get_pre_trade_day(now):
 	is_find = False
