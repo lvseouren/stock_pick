@@ -1,0 +1,1 @@
+python F:\GitRoot\stock_pick\run_all.py

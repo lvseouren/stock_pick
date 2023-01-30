@@ -13,7 +13,7 @@ log_dir = os.getcwd() + '\\log\\'
 
 ts_inited = False
 
-strict_level = 1
+strict_level = 2
 
 def try_init_ts():
     if not ts_inited:
@@ -38,4 +38,7 @@ def stock_filter_all(code):
     return stock_filter_hushen(code) or stock_filter_chuangyeban(code)
 
 def stock_is_st(name):
-    return re.match('st', name) or re.match('ST', name) or re.match('St', name)
+    if re.findall('st', name) or re.findall('ST', name) or re.findall('St', name):
+        return True
+    else:
+        return False

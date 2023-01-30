@@ -23,22 +23,22 @@ def everystock():
 
 	##使用for循环遍历所有的股票
 	for x in range(0,len(stock_info)):
+		code = codes[x]
 		try:
-			if re.match('000',codes[x]) or re.match('002',codes[x]):
+			if constants.stock_filter_all(code):
 				#获取单只股票当天的行情
-				code = codes[x]
 				df = ts.get_hist_data(code, start=new_time,end=new_time)
 				#将时间转换格式
 				times = time.strptime(new_time,'%Y-%m-%d')
 				time_new = time.strftime('%Y%m%d',times)
 				#将当天的行情插入数据库
-				mysqlCmd = 'insert into stock_'+codes[x]+ ' (date,open,close,high,low,volume,p_change) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[0],df.close[0],df.high[0],df.low[0],df.volume[0],df.p_change[0])
+				mysqlCmd = 'insert into stock_'+code+ ' (date,open,close,high,low,volume,p_change) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[0],df.close[0],df.high[0],df.low[0],df.volume[0],df.p_change[0])
 				cursor.execute(mysqlCmd)
 				
-				print('%s的数据插入完成'%codes[x])
+				print('%s的数据插入完成'%code)
 				a += 1
 		except:
-			print('%s无行情或者数据库已经存在当天的数据'%codes[x])
+			print('%s无行情或者数据库已经存在当天的数据'%code)
 	#统计当天插入数据库的股票数量
 	dir_log = constants.log_dir
 	filename = dir_log + new_time +'.log'
