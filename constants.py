@@ -34,3 +34,6 @@ def stock_filter_chuangyeban(code):
 
 def stock_filter_all(code):
     return stock_filter_hushen(code) or stock_filter_chuangyeban(code)
+
+def stock_is_st(name):
+    return re.match('st', name) or re.match('ST', name) or re.match('St', name)

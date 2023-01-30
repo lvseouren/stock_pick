@@ -115,14 +115,15 @@ def twoyang(dates):
 								   database=constants.mysql_database_name)
 	cursor = conn.cursor()
 	# 查找allstock表获取所有股票代码
-	cursor.execute('select code from allstock')
+	cursor.execute('select code, name from allstock')
 	value_code = cursor.fetchall()
 	a = 0
 	count = []
 	# 遍历所有股票
 	for i in range(0, len(value_code)):
 		code = value_code[i][0]
-		if constants.stock_filter_all(code):
+		name = value_code[i][1]
+		if not constants.stock_is_st(name) and constants.stock_filter_all(code):
 			# 查询所有匹配到的股票，将今天与昨天的数据对比
 			try:
 				cursor.execute(
