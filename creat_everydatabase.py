@@ -45,6 +45,7 @@ def everdate(starttime,endtime):
 			except:
 				print('%s这股票目前停牌'%code)
 
+	conn.commit()
 	conn.close()
 	cursor.close()
 	#统计总共插入了多少张表的数据

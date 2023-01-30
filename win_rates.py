@@ -41,8 +41,8 @@ def rate(todays):
 				volume3 = float(value[i + 2][5])
 				high4 = float[value[i+3][3]]
 
-				if find_stock.isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1):
-					if find_stock.isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2):
+				if find_stock.isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2):
+					if find_stock.isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2, p_change3):
 						total_3yang_times+=1
 						if high4 > close3:
 							total_3yang_win_times+=1

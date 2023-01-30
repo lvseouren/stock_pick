@@ -121,11 +121,12 @@ def twoyang(dates):
 	count = []
 	# 遍历所有股票
 	for i in range(0, len(value_code)):
-		if re.match('000', value_code[i][0]) or re.match('002', value_code[i][0]):
+		code = value_code[i][0]
+		if constants.stock_filter_all(code):
 			# 查询所有匹配到的股票，将今天与昨天的数据对比
 			try:
 				cursor.execute(
-					'select * from stock_' + value_code[i][0] + ' where date=%s or date =%s order by date desc' % (
+					'select * from stock_' + code + ' where date=%s or date =%s order by date desc' % (
 						today, str_yestoday))  # 当天
 				# cursor.execute('select * from stock_'+ value_code[i][0]+ ' where date=%s or date =%s'%('20180315','20180314'))
 				value = cursor.fetchall()
@@ -142,8 +143,9 @@ def twoyang(dates):
 				opens2 = float(value[1][1])
 				close2 = float(value[1][2])
 				volume2 = float(value[1][5])
+				p_change2 = float(value[1][6])
 
-				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1):
+				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2):
 					flog.write('%s票%s的开盘价是%s\n' % (value_code[i][0], today, opens1))
 					flog.write('%s票%s的收盘价是%s\n' % (value_code[i][0], today, close1))
 					flog.write('%s票%s的成交量是%s\n' % (value_code[i][0], today, volume1))
@@ -167,8 +169,8 @@ def twoyang(dates):
 
 
 # 2是昨天，1是今天
-def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1):
-	return close1 > close2 and close2 > opens2 and close1 > opens1 and volume1 > volume2 and p_change1 > 2
+def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2):
+	return p_change2 > 0 and close1 > close2 and close2 > opens2 and close1 > opens1 and volume1 > volume2 and p_change1 > 2
 
 def get_pre_trade_day(now):
 	is_find = False

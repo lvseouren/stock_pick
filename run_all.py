@@ -55,9 +55,14 @@ if __name__ == '__main__':
 	ts.set_token('ed4a03d581a87d8a6f95cf1f06d31bec659d785e9bf410008fe91493')
 
 	test_report_dir = constants.report_dir
+	if not os.path.exists(constants.report_dir):
+		os.mkdir(constants.report_dir)
+	if not os.path.exists(constants.log_dir):
+		os.mkdir(constants.log_dir)
+
 	#如果执行的不是当天的日期的话请将第一个todays注释掉
 	todays = time.strftime('%Y-%m-%d')
-	# todays = '2023-01-17'
+	todays = '2023-01-20'
 	#如果不是交易日执行的话write_everyday会报错，会报tushare获取不到行情，所以请手动输入日期并将下面一行注释掉
 	# write_everyday.everystock()
 	time.sleep(3)
