@@ -142,6 +142,7 @@ def twoyang(dates):
 				# 今天的涨幅
 				p_change1 = float(value[0][6])
 				volume1 = float(value[0][5])
+				turnover1 = float(value[0][7])
 				# 昨天的。。。。。
 				opens2 = float(value[1][1])
 				close2 = float(value[1][2])
@@ -157,16 +158,19 @@ def twoyang(dates):
 
 				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, True):
 					if not isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2, p_change3):
-						flist.write('%s %s %s \n' %(code, close1, volume1))
-						flog.write('%s票%s的开盘价是%s\n' % (code, today, opens1))
-						flog.write('%s票%s的收盘价是%s\n' % (code, today, close1))
-						flog.write('%s票%s的成交量是%s\n' % (code, today, volume1))
-						flog.write('%s票%s的开盘价是%s\n' % (code, str_yestoday, opens2))
-						flog.write('%s票%s的收盘价价是%s\n' % (code, str_yestoday, close2))
-						flog.write('%s票%s的成交量是%s\n' % (code, str_yestoday, volume2))
-						# 将满足条件的股票代码放进列表中，统计当天满足条件的股票
-						count.append(code)
-						a += 1
+						if turnover1 < constants.turnover_threshold:
+							flist.write('%s %s %s \n' %(code, close1, volume1))
+							flog.write('%s票%s的开盘价是%s\n' % (code, today, opens1))
+							flog.write('%s票%s的收盘价是%s\n' % (code, today, close1))
+							flog.write('%s票%s的成交量是%s\n' % (code, today, volume1))
+							flog.write('%s票%s的开盘价是%s\n' % (code, str_yestoday, opens2))
+							flog.write('%s票%s的收盘价价是%s\n' % (code, str_yestoday, close2))
+							flog.write('%s票%s的成交量是%s\n' % (code, str_yestoday, volume2))
+							# 将满足条件的股票代码放进列表中，统计当天满足条件的股票
+							count.append(code)
+							a += 1
+						else:
+							print('%s 换手率为%s低于阈值%s' %(code, turnover1, constants.turnover_threshold))
 					else:
 						print("%s 3yang了" % code)
 						# 3yang了

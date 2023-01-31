@@ -20,7 +20,9 @@ file_winrate = 'winrate_monitor.txt'
 
 ts_inited = False
 
+# limit
 strict_level = 3
+turnover_threshold = 100
 
 def try_init_ts():
     if not ts_inited:
