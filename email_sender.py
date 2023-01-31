@@ -1,10 +1,10 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.header import Header
+from email.header import Header, make_header
 import time
 
-def send_email(subject, att_file_name):
+def send_email(subject, att_file_name, att_suffix = ' '):
     todays = time.strftime('%Y-%m-%d')
     f = open(att_file_name, 'rb')
     mail_body = f.read()
@@ -20,7 +20,8 @@ def send_email(subject, att_file_name):
     msg = MIMEMultipart('mixed')
     att = MIMEText(mail_body, 'txt', 'utf-8')
     att['Content-Type'] = 'application/octet-stream'
-    att['Content-Disposition'] = 'attachment; filename = "%s.txt"' % todays
+    name = '%s%s.txt' %(todays, att_suffix)
+    att.add_header("Content-Disposition", "attachment", filename=("gbk", "", name))
 
     msg.attach(att)
 

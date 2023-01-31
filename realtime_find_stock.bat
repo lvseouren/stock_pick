@@ -1,0 +1,1 @@
+python F:\GitRoot\stock_pick\realtime_find_stock.py

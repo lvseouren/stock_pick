@@ -10,6 +10,7 @@ def valid_stock():
     new_time = time.strftime('%Y-%m-%d')
     filename = constants.report_dir + new_time + '_2to3.txt'
     ftoday = open(filename, 'w')
+    ftoday.write('以下为满足特征的标的列表：\n')
     # read txt method three
     now = datetime.date(*map(int, new_time.split('-')))
     yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
@@ -39,11 +40,13 @@ def valid_stock():
 
         except:
             print('%s无行情' % code)
-    print('共找到%s支满足特征的标的' %count)
+    str = '\n共找到%s支满足特征的标的' %count
+    print(str)
+    ftoday.write(str)
     ftoday.close()
 
 valid_stock()
 new_time = time.strftime('%Y-%m-%d')
 subject = '%s 2进3标的列表' % new_time
 filename = constants.report_dir + new_time + '_2to3.txt'
-email_sender.send_email(subject, filename)
+email_sender.send_email(subject, filename, "2进3标的数据")
