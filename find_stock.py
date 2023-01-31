@@ -91,6 +91,8 @@ def twoyang(dates):
 	flog = open(filename, 'w')
 	errorFileName = dir_log +dates + '_error.log'
 	f_err_log = open(errorFileName, 'w')
+	filename = constants.report_dir + dates + '_list.txt'
+	flist = open(filename, 'w')
 
 	# 先将字符串格式的时间转换为时间格式才能计算昨天的日期
 	now = datetime.date(*map(int, dates.split('-')))
@@ -99,11 +101,8 @@ def twoyang(dates):
 	# # 将昨天日期转换为规定的字符串格式
 	# times = time.strptime(yestody, '%Y-%m-%d')
 	# str_yestoday = time.strftime('%Y%m%d', times)
-	str_yestoday = get_pre_trade_day(now)
-	times = time.strptime(str_yestoday, '%Y%m%d')
-	yestoday = time.strftime('%Y-%m-%d', times)
-	yestoday = datetime.date(*map(int, yestoday.split('-')))
-	str_theday_before_yestoday = get_pre_trade_day(yestoday)
+	str_yestoday, yestoday = get_pre_trade_day(now)
+	str_theday_before_yestoday, theday_before_yestoday = get_pre_trade_day(yestoday)
 
 	flog.write('执行的时间前一天是%s\n' % str_yestoday)
 	# 将想要查找的日期转换为规定的字符串格式
@@ -152,9 +151,11 @@ def twoyang(dates):
 				close3 = float(value[2][2])
 				volume3 = float(value[2][5])
 				p_change3 = float(value[2][6])
+				flog.write('检查%s是否满足特征...\n' % (code))
 
-				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2):
+				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, True):
 					if not isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2, p_change3):
+						flist.write('%s %s %s \n' %(code, close1, volume1))
 						flog.write('%s票%s的开盘价是%s\n' % (code, today, opens1))
 						flog.write('%s票%s的收盘价是%s\n' % (code, today, close1))
 						flog.write('%s票%s的成交量是%s\n' % (code, today, volume1))
@@ -175,20 +176,24 @@ def twoyang(dates):
 	print('总共找到%d支满足条件的股票' % a)
 	flog.close()
 	f_err_log.close()
+	flist.close()
 	conn.close()
 	cursor.close()
 	return count, a, count_3yang
 
 # 1今天2昨天3前天
 def isSatisfy_3yang(open1, close1, volume1, p_change1, open2, close2, volume2, p_change2, open3, close3, volume3, p_change3):
-	return isSatisfy_twoyang(open1, close1, open2, close2, volume1, volume2, p_change1, p_change2) and isSatisfy_twoyang(open2, close2, open3, close3, volume2, volume3, p_change2, p_change3)
+	return isSatisfy_twoyang(open1, close1, open2, close2, volume1, volume2, p_change1, p_change2, True) and isSatisfy_twoyang(open2, close2, open3, close3, volume2, volume3, p_change2, p_change3)
 
 
 # 2是昨天，1是今天
-def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2):
-	ret = p_change2 > 0 and close1 > close2 and close2 > opens2 and close1 > opens1 and volume1 > volume2 and p_change1 > 2
-	if constants.strict_level > 1:
-		ret = ret and p_change1 <=5
+def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, is_change_limit = False):
+	ret = close1 > close2 and close2 > opens2 and close1 > opens1 and volume1 > volume2
+	if ret and is_change_limit:
+		ret = ret and p_change2 > 0 and p_change1 > 2
+
+	if is_change_limit and ret and constants.strict_level > 1:
+		ret = p_change1 <= 5
 	return ret
 
 def get_pre_trade_day(now):
@@ -205,7 +210,10 @@ def get_pre_trade_day(now):
 			is_find = True
 			ret = str_yestoday
 		now = yestodayDate
-	return ret
+	times = time.strptime(ret, '%Y%m%d')
+	ret_time = time.strftime('%Y-%m-%d', times)
+	ret_time = datetime.date(*map(int, ret_time.split('-')))
+	return ret, ret_time
 def is_trade_day(date):
 	pro = ts.pro_api()
 	df = pro.trade_cal(exchange='', start_date=date, end_date=date)
