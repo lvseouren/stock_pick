@@ -9,6 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
 import tushare as ts
+import email_sender
 
 #获取最新的文件
 def new_file(test_report_dir):
