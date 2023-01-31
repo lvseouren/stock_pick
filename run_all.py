@@ -36,6 +36,6 @@ if __name__ == '__main__':
 	# write_everyday.everystock()
 	time.sleep(3)
 	win_rates.rate(todays)
-	subject = '今天的股票行情来啦(strict_level)=%s' % (constants.strict_level)
+	subject = '今天的股票行情来啦(strict_level=%s)' % (constants.strict_level)
 	filename = test_report_dir + todays + constants.filename_2yang
 	email_sender.send_email(subject, filename)
