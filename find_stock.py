@@ -158,7 +158,7 @@ def twoyang(dates):
 
 				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, True):
 					if not isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2, p_change3):
-						if turnover1 < constants.turnover_threshold:
+						if turnover1 <= constants.turnover_threshold_upper_bound and turnover1 >= constants.turnover_threshold_lower_bound:
 							flist.write('%s %s %s \n' %(code, close1, volume1))
 							flog.write('%s票%s的开盘价是%s\n' % (code, today, opens1))
 							flog.write('%s票%s的收盘价是%s\n' % (code, today, close1))
@@ -170,7 +170,7 @@ def twoyang(dates):
 							count.append(code)
 							a += 1
 						else:
-							print('%s 换手率为%s低于阈值%s' %(code, turnover1, constants.turnover_threshold))
+							print('%s 换手率为%s不在区间内[%s,%s]' % (code, turnover1, constants.turnover_threshold_lower_bound, constants.turnover_threshold_upper_bound))
 					else:
 						print("%s 3yang了" % code)
 						# 3yang了
@@ -206,9 +206,9 @@ def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change
 
 	if is_change_limit and ret:
 		if constants.strict_level > 1:
-			ret = p_change1 <= 5
+			ret = p_change1 <= constants.change_limit_1
 		if constants.strict_level > 2:
-			ret = p_change1 <= 4
+			ret = p_change1 <= constants.change_limit_2
 
 	return ret
 

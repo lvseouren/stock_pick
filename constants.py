@@ -13,7 +13,7 @@ log_dir = os.getcwd() + '\\log\\'
 
 # filename
 filename_3yang_list = '_list_3yang.txt'
-filename_2yang_list = '_list.txt'
+filename_2yang_list = '_list_2yang.txt'
 filename_3yang = '_3yang.txt'
 filename_2yang = '_2yang.txt'
 file_winrate = 'winrate_monitor.txt'
@@ -22,7 +22,10 @@ ts_inited = False
 
 # limit
 strict_level = 3
-turnover_threshold = 100
+turnover_threshold_upper_bound = 10
+turnover_threshold_lower_bound = 2
+change_limit_1 = 5
+change_limit_2 = 4
 
 def try_init_ts():
     if not ts_inited:
