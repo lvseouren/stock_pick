@@ -5,7 +5,7 @@ import os
 # mysql
 mysql_user = 'root'
 mysql_password = 'abc123'
-mysql_database_name = 'test'
+mysql_database_name = 'test2'
 
 # dir
 report_dir = os.getcwd() + '\\report\\'

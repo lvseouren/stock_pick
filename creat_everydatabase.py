@@ -11,7 +11,7 @@ def everdate(starttime,endtime):
 	#连接数据库
 	conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password, database=constants.mysql_database_name)
 	cursor = conn.cursor()
-	cursor.execute('use test;')
+	cursor.execute('use %s;' % constants.mysql_database_name)
 	cursor.execute('show tables;')
 	result = cursor.fetchall()
 	print(result)
@@ -24,10 +24,15 @@ def everdate(starttime,endtime):
 		code = stock_data[1]
 		if constants.stock_filter_all(code):
 			#以stock_加股票代码为表名称创建表格
-			sqlCmd = 'create table stock_' + code + ' (date varchar(32),open varchar(32),close varchar(32),high varchar(32),low varchar(32),volume varchar(32),p_change varchar(32),unique(date))'
-			print(sqlCmd)
-
+			sqlCmd = 'create table stock_' + code + ' (date varchar(32),open varchar(32),close varchar(32),high varchar(32),low varchar(32),volume varchar(32),p_change varchar(32), turnover varchar(32),unique(date))'
 			cursor.execute(sqlCmd)
+			# print(sqlCmd)
+
+			# sqlCmd = 'alter table stock_' + code + ' add turnover varchar(32);'
+			# print(sqlCmd)
+			# cursor.execute(sqlCmd)
+			# continue
+
 			#利用tushare包获取单只股票的阶段性行情
 			df = ts.get_hist_data(code,starttime,endtime)
 			print('%s的表格创建完成'%code)
@@ -40,8 +45,7 @@ def everdate(starttime,endtime):
 					times = time.strptime(df.index[i],'%Y-%m-%d')
 					time_new = time.strftime('%Y%m%d',times)
 					#插入每一天的行情
-					cursor.execute('insert into stock_'+code+ ' (date,open,close,high,low,volume,p_change) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[i],df.close[i],df.high[i],df.low[i],df.volume[i],df.p_change[i]))
-					
+					cursor.execute('insert into stock_'+code+ ' (date,open,close,high,low,volume,p_change,turnover) values (%s,%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[i],df.close[i],df.high[i],df.low[i],df.volume[i],df.p_change[i], df.turnover[i]))
 			except:
 				print('%s这股票目前停牌'%code)
 
@@ -51,4 +55,4 @@ def everdate(starttime,endtime):
 	#统计总共插入了多少张表的数据
 	print('所有股票总共插入数据库%d张表格'%a)
 
-everdate('2023-01-01','2023-01-13')
+everdate('2023-01-16','2023-01-31')
