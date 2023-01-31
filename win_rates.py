@@ -13,10 +13,10 @@ def rate(todays):
 	#将满足阳包阴的这些股票，以及它们之前满足的时候收益率都写到报告里面方便查看整体情况
 	count,a,count2 = find_stock.valid_stock(todays)
 	dir_repor = constants.report_dir
-	filename = dir_repor + todays +'.txt'
+	filename = dir_repor + todays + constants.filename_2yang
 	fp = open(filename,'a')
 	fp.write('总共找到%d支满足条件的股票分别是\n%s\n'%(a,count))
-	filename2 = dir_repor + todays + '_extra.txt'
+	filename2 = dir_repor + todays + constants.filename_3yang
 	fp2 = open(filename2, 'w')
 	fp2.write('总共找到%d支满足条件的股票分别是\n%s\n'%(len(count2),count2))
 	fp2.close()
@@ -79,7 +79,7 @@ def overall_winrate(dates):
 	errorFileName = dir_log + dates + 'winrate_error.log'
 	f_err_log = open(errorFileName, 'w')
 	dir_repor = constants.report_dir
-	filename = dir_repor + dates +'.txt'
+	filename = dir_repor + dates + constants.filename_2yang
 	fp = open(filename,'w')
 	filename = dir_repor + constants.file_winrate
 	fwinrate = open(filename, 'a')

@@ -14,6 +14,8 @@ log_dir = os.getcwd() + '\\log\\'
 # filename
 filename_3yang_list = '_list_3yang.txt'
 filename_2yang_list = '_list.txt'
+filename_3yang = '_3yang.txt'
+filename_2yang = '_2yang.txt'
 file_winrate = 'winrate_monitor.txt'
 
 ts_inited = False
