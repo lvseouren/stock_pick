@@ -158,13 +158,21 @@ def overall_winrate(dates):
 
 	summary = '%s前一个交易日满足3阳策略的标的有%s支,其中%s只今日的最高涨幅超过一个点\n' % (dates, count_3yang, count_3yang_earn)
 	print(summary)
-	winRateStr = "%s大盘该策略的胜率为 %s\n\n" % (dates, count_3yang_earn/count_3yang)
+	winrate = 0
+	if count_3yang > 0:
+		winrate = count_3yang_earn/count_3yang
+	winRateStr = "%s大盘该策略的胜率为 %s\n\n" % (dates, winrate)
 	print(winRateStr)
 	flog.write(summary)
 	flog.write(winRateStr)
-	fwinrate.write(winRateStr)
 	fp.write(summary)
 	fp.write(winRateStr)
+
+	df = ts.get_hist_data('sh', start=dates, end=dates)
+	close = df.close[0]
+	str = '%s 上证指数：%s 策略胜率：%s\n' %(dates, close, winrate)
+	fwinrate.write(str)
+
 	fwinrate.close()
 	flog.close()
 	f_err_log.close()
