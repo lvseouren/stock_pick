@@ -215,7 +215,9 @@ def realtime_overall_winrate():
 	totalCnt = len(lines)
 	winrate = count/totalCnt
 
-	ftoday.write('%s只标的中有%s可以盈利，实时胜率为%s：\n' % (totalCnt, count, winrate))
+	str = '%s只标的中有%s可以盈利，实时胜率为%s：\n' % (totalCnt, count, winrate)
+	print(str)
+	ftoday.write(str)
 	ftoday.close()
 	return
 

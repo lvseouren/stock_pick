@@ -20,7 +20,7 @@ file_winrate = 'winrate_monitor.txt'
 
 ts_inited = False
 
-strict_level = 2
+strict_level = 3
 
 def try_init_ts():
     if not ts_inited:

@@ -168,9 +168,13 @@ def twoyang(dates):
 						count.append(code)
 						a += 1
 					else:
+						print("%s 3yang了" % code)
 						# 3yang了
-						flist_3yang.write('%s %s %s \n' %(code, close1, volume1))
-						count_3yang.append(code)
+						# flist_3yang.write('%s %s %s \n' %(code, close1, volume1))
+						# count_3yang.append(code)
+				if isSatisfy_3yang(opens1, close1, volume1, p_change1, opens2, close2, volume2, p_change2, opens3, close3, volume3, p_change3):
+					flist_3yang.write('%s %s %s \n' %(code, close1, volume1))
+					count_3yang.append(code)
 			except:
 				# 之前有次sql语句出错了，order by后面没加date，每次寻找都是0支，找了半个多小时才找出来是sql语句的问题
 				f_err_log.write(
@@ -187,17 +191,21 @@ def twoyang(dates):
 
 # 1今天2昨天3前天
 def isSatisfy_3yang(open1, close1, volume1, p_change1, open2, close2, volume2, p_change2, open3, close3, volume3, p_change3):
-	return isSatisfy_twoyang(open1, close1, open2, close2, volume1, volume2, p_change1, p_change2, True) and isSatisfy_twoyang(open2, close2, open3, close3, volume2, volume3, p_change2, p_change3)
+	return isSatisfy_twoyang(open1, close1, open2, close2, volume1, volume2, p_change1, p_change2) and isSatisfy_twoyang(open2, close2, open3, close3, volume2, volume3, p_change2, p_change3)
 
 
 # 2是昨天，1是今天
 def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, is_change_limit = False):
-	ret = close1 > close2 and close2 > opens2 and close1 > opens1 and volume1 > volume2
+	ret = close1 > close2 and p_change2 > 0 and close1 > opens1 and volume1 > volume2
 	if ret and is_change_limit:
-		ret = ret and p_change2 > 0 and p_change1 > 2
+		ret = ret and p_change1 > 2
 
-	if is_change_limit and ret and constants.strict_level > 1:
-		ret = p_change1 <= 5
+	if is_change_limit and ret:
+		if constants.strict_level > 1:
+			ret = p_change1 <= 5
+		if constants.strict_level > 2:
+			ret = p_change1 <= 4
+
 	return ret
 
 def get_pre_trade_day(now):
