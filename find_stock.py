@@ -91,8 +91,10 @@ def twoyang(dates):
 	flog = open(filename, 'w')
 	errorFileName = dir_log +dates + '_error.log'
 	f_err_log = open(errorFileName, 'w')
-	filename = constants.report_dir + dates + '_list.txt'
+	filename = constants.report_dir + dates + constants.filename_2yang_list
 	flist = open(filename, 'w')
+	filename = constants.report_dir + dates + constants.filename_3yang_list
+	flist_3yang = open(filename, 'w')
 
 	# 先将字符串格式的时间转换为时间格式才能计算昨天的日期
 	now = datetime.date(*map(int, dates.split('-')))
@@ -167,6 +169,7 @@ def twoyang(dates):
 						a += 1
 					else:
 						# 3yang了
+						flist_3yang.write('%s %s %s \n' %(code, close1, volume1))
 						count_3yang.append(code)
 			except:
 				# 之前有次sql语句出错了，order by后面没加date，每次寻找都是0支，找了半个多小时才找出来是sql语句的问题
@@ -177,6 +180,7 @@ def twoyang(dates):
 	flog.close()
 	f_err_log.close()
 	flist.close()
+	flist_3yang.close()
 	conn.close()
 	cursor.close()
 	return count, a, count_3yang

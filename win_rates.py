@@ -1,10 +1,11 @@
 #这个文件可以联合find_stock单独运行，输入todays的日期可以直接查找当天出现过的股票
 import datetime
 import time
-
+import tushare as ts
 import mysql.connector
 import constants
 import find_stock
+
 #统计当天满足阳包阴所有股票，在设置的这段时间里面有没有出现过类似的行情，并且计算如果出现过，那么那天之后的5天收益率是多少
 def rate(todays):
 	print(todays)
@@ -80,6 +81,8 @@ def overall_winrate(dates):
 	dir_repor = constants.report_dir
 	filename = dir_repor + dates +'.txt'
 	fp = open(filename,'w')
+	filename = dir_repor + constants.file_winrate
+	fwinrate = open(filename, 'a')
 
 	# 先将字符串格式的时间转换为时间格式才能计算昨天的日期
 	now = datetime.date(*map(int, dates.split('-')))
@@ -155,16 +158,58 @@ def overall_winrate(dates):
 
 	summary = '%s前一个交易日满足3阳策略的标的有%s支,其中%s只今日的最高涨幅超过一个点\n' % (dates, count_3yang, count_3yang_earn)
 	print(summary)
-	winRateStr = "%s大盘该策略的胜率为%s\n\n" % (dates, count_3yang_earn/count_3yang)
+	winRateStr = "%s大盘该策略的胜率为 %s\n\n" % (dates, count_3yang_earn/count_3yang)
 	print(winRateStr)
 	flog.write(summary)
 	flog.write(winRateStr)
+	fwinrate.write(winRateStr)
 	fp.write(summary)
 	fp.write(winRateStr)
+	fwinrate.close()
 	flog.close()
 	f_err_log.close()
 	conn.close()
 	fp.close()
 	cursor.close()
 
+# 遍历上一交易日所有的3yang标的，取得其今天的最高股价，看涨幅是否大于1个点
+def realtime_overall_winrate():
+	new_time = time.strftime('%Y-%m-%d')
+	filename = constants.report_dir + new_time + '_实时胜率.txt'
+	ftoday = open(filename, 'w')
+	ftoday.write('以下标的最高涨幅超过1个点：\n')
+
+	now = datetime.date(*map(int, new_time.split('-')))
+	yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
+	yestodayStr = time.strptime(yestodayStr, '%Y%m%d')
+	yestodayStr = time.strftime('%Y-%m-%d', yestodayStr)
+	filename = constants.report_dir + yestodayStr + constants.filename_3yang_list
+	fp = open(filename, "r")
+	lines = fp.readlines()
+	fp.close()
+	count = 0
+	for x in lines:
+		data = x.split(' ')
+		code = data[0]
+		close = float(data[1])
+		try:
+			# 获取单只股票当天的行情
+			df = ts.get_realtime_quotes(code)
+			high = float(df.high[0])
+			if close < high and (high - close)/close > 0.01:
+				count += 1
+				ftoday.write('%s %s\n' % (code, df.name[0]))
+				print('%s %s能够盈利' % (code, df.name[0]))
+
+		except:
+			print('%s无行情' % code)
+
+	totalCnt = len(lines)
+	winrate = count/totalCnt
+
+	ftoday.write('%s只标的中有%s可以盈利，实时胜率为%s：\n' % (totalCnt, count, winrate))
+	ftoday.close()
+	return
+
+# realtime_overall_winrate()
 #rate('2018-03-16')

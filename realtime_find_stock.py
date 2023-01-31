@@ -35,7 +35,7 @@ def valid_stock():
             curr_price = float(df.price[0])
             if volume < curr_volume and close < curr_price:
                 count+=1
-                ftoday.write('%s\n' %code)
+                ftoday.write('%s %s\n' %(code, df.name[0]))
                 print('%s满足特征' %code)
 
         except:

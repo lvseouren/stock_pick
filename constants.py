@@ -11,6 +11,11 @@ mysql_database_name = 'test'
 report_dir = os.getcwd() + '\\report\\'
 log_dir = os.getcwd() + '\\log\\'
 
+# filename
+filename_3yang_list = '_list_3yang.txt'
+filename_2yang_list = '_list.txt'
+file_winrate = 'winrate_monitor.txt'
+
 ts_inited = False
 
 strict_level = 2
