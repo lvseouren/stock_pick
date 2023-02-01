@@ -32,8 +32,15 @@ def valid_stock():
         try:
             # 获取单只股票当天的行情
             df = ts.get_realtime_quotes(code)
-            curr_volume = float(df.volume[0])/100
+
             curr_price = float(df.price[0])
+            curr_change = (curr_price - close)/close * 100
+            if curr_change > constants.change_limit_2to3:
+                print('%s %s涨幅(%s)超过阈值(%s), pass' %(code, name, curr_change, constants.change_limit_2to3))
+                continue
+
+            curr_volume = float(df.volume[0])/100
+
             if volume < curr_volume and close < curr_price:
                 count+=1
                 ftoday.write('%s %s %s %s\n' %(code, curr_price, curr_volume, df.name[0]))

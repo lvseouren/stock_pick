@@ -23,10 +23,14 @@ ts_inited = False
 
 # limit
 strict_level = 2
-turnover_threshold_upper_bound = 100
-turnover_threshold_lower_bound = 0
+turnover_threshold_upper_bound = 15
+turnover_threshold_lower_bound = 8
+# 默认值
+turnover_threshold_upper_bound_default = 10
+turnover_threshold_lower_bound_default = 2
 change_limit_level_2 = 7
 change_limit_level_3 = 5
+change_limit_2to3 = 8
 
 def try_init_ts():
     if not ts_inited:
