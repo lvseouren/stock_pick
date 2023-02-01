@@ -159,7 +159,7 @@ def twoyang(dates):
 				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, True):
 					if not isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2, p_change3):
 						if turnover1 <= constants.turnover_threshold_upper_bound and turnover1 >= constants.turnover_threshold_lower_bound:
-							flist.write('%s %s %s \n' %(code, close1, volume1))
+							flist.write('%s %s %s %s\n' %(code, close1, volume1, name))
 							flog.write('%s票%s的开盘价是%s\n' % (code, today, opens1))
 							flog.write('%s票%s的收盘价是%s\n' % (code, today, close1))
 							flog.write('%s票%s的成交量是%s\n' % (code, today, volume1))
@@ -177,7 +177,7 @@ def twoyang(dates):
 						# flist_3yang.write('%s %s %s \n' %(code, close1, volume1))
 						# count_3yang.append(code)
 				if isSatisfy_3yang(opens1, close1, volume1, p_change1, opens2, close2, volume2, p_change2, opens3, close3, volume3, p_change3):
-					flist_3yang.write('%s %s %s \n' %(code, close1, volume1))
+					flist_3yang.write('%s %s %s %s\n' %(code, close1, volume1, name))
 					count_3yang.append(code)
 			except:
 				# 之前有次sql语句出错了，order by后面没加date，每次寻找都是0支，找了半个多小时才找出来是sql语句的问题
