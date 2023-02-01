@@ -10,7 +10,7 @@ def valid_stock():
     new_time = time.strftime('%Y-%m-%d')
     filename = constants.report_dir + new_time + constants.filename_2to3
     ftoday = open(filename, 'w')
-    ftoday.write('以下为满足特征的标的列表：\n')
+    # ftoday.write('以下为满足特征的标的列表：\n')
     # read txt method three
     now = datetime.date(*map(int, new_time.split('-')))
     yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
@@ -28,6 +28,7 @@ def valid_stock():
         code = data[0]
         close = float(data[1])
         volume = float(data[2])
+        name = data[3]
         try:
             # 获取单只股票当天的行情
             df = ts.get_realtime_quotes(code)
@@ -35,14 +36,21 @@ def valid_stock():
             curr_price = float(df.price[0])
             if volume < curr_volume and close < curr_price:
                 count+=1
-                ftoday.write('%s %s\n' %(code, df.name[0]))
-                print('%s满足特征' %code)
+                ftoday.write('%s %s %s %s\n' %(code, curr_price, curr_volume, df.name[0]))
+                print('%s %s满足特征' %(code, name))
+            else:
+                str = ''
+                if volume > curr_volume:
+                    str = '成交量,'
+                if curr_price < close:
+                    str=str+'价格'
+                print('%s %s不满足(%s)， volume=%s(昨日%s),price=%s(昨日close=%s)' %(code, name, str, curr_volume, volume, curr_price, close))
 
         except:
             print('%s无行情' % code)
     str = '\n共找到%s支满足特征的标的' %count
     print(str)
-    ftoday.write(str)
+    # ftoday.write(str)
     ftoday.close()
 
 valid_stock()
