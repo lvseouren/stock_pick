@@ -8,7 +8,7 @@ import email_sender
 #获取2阳标的最新数据，判断其当前是否满足3阳特征
 def valid_stock():
     new_time = time.strftime('%Y-%m-%d')
-    filename = constants.report_dir + new_time + '_2to3.txt'
+    filename = constants.report_dir + new_time + constants.filename_2to3
     ftoday = open(filename, 'w')
     ftoday.write('以下为满足特征的标的列表：\n')
     # read txt method three
@@ -16,7 +16,7 @@ def valid_stock():
     yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
     yestodayStr = time.strptime(yestodayStr, '%Y%m%d')
     yestodayStr = time.strftime('%Y-%m-%d', yestodayStr)
-    filename = constants.report_dir + yestodayStr + "_list.txt"
+    filename = constants.report_dir + yestodayStr + constants.filename_2yang_list
     fp = open(filename, "r")
     lines = fp.readlines()
     fp.close()
@@ -48,5 +48,5 @@ def valid_stock():
 valid_stock()
 new_time = time.strftime('%Y-%m-%d')
 subject = '%s 2进3标的列表' % new_time
-filename = constants.report_dir + new_time + '_2to3.txt'
+filename = constants.report_dir + new_time + constants.filename_2to3
 email_sender.send_email(subject, filename, "2进3标的数据")

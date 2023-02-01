@@ -207,7 +207,7 @@ def realtime_overall_winrate():
 			if close < high and (high - close)/close > 0.01:
 				count += 1
 				ftoday.write('%s %s\n' % (code, df.name[0]))
-				print('%s %s能够盈利' % (code, df.name[0]))
+				print('%s %s' % (code, df.name[0]))
 
 		except:
 			print('%s无行情' % code)

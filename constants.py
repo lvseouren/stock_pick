@@ -17,6 +17,7 @@ filename_2yang_list = '_list_2yang.txt'
 filename_3yang = '_3yang.txt'
 filename_2yang = '_2yang.txt'
 file_winrate = 'winrate_monitor.txt'
+filename_2to3 = '_2to3.txt'
 
 ts_inited = False
 
