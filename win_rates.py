@@ -185,7 +185,6 @@ def realtime_overall_winrate():
 	new_time = time.strftime('%Y-%m-%d')
 	filename = constants.report_dir + new_time + '_实时胜率.txt'
 	ftoday = open(filename, 'w')
-	ftoday.write('以下标的最高涨幅超过1个点：\n')
 
 	now = datetime.date(*map(int, new_time.split('-')))
 	yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
@@ -193,6 +192,7 @@ def realtime_overall_winrate():
 	yestodayStr = time.strftime('%Y-%m-%d', yestodayStr)
 	filename = constants.report_dir + yestodayStr + constants.filename_3yang_list
 	fp = open(filename, "r")
+	ftoday.write('%s中 以下标的最高涨幅超过1个点：\n' %filename)
 	lines = fp.readlines()
 	fp.close()
 	count = 0

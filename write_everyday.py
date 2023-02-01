@@ -32,7 +32,8 @@ def everystock():
 				times = time.strptime(new_time,'%Y-%m-%d')
 				time_new = time.strftime('%Y%m%d',times)
 				#将当天的行情插入数据库
-				mysqlCmd = 'insert into stock_'+code+ ' (date,open,close,high,low,volume,p_change) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[0],df.close[0],df.high[0],df.low[0],df.volume[0],df.p_change[0])
+				mysqlCmd = 'insert into stock_'+code+ ' (date,open,close,high,low,volume,p_change, turnover) values (%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[0],df.close[0],df.high[0],df.low[0],df.volume[0],df.p_change[0], df.turnover[0])
+				# mysqlCmd = 'update stock_'+ code + ' set turnover=%s where date =%s' %(df.turnover[0], time_new)
 				cursor.execute(mysqlCmd)
 				
 				print('%s的数据插入完成'%code)

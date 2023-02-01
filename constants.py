@@ -22,11 +22,11 @@ filename_2to3 = '_2to3.txt'
 ts_inited = False
 
 # limit
-strict_level = 3
-turnover_threshold_upper_bound = 10
-turnover_threshold_lower_bound = 2
-change_limit_1 = 5
-change_limit_2 = 4
+strict_level = 2
+turnover_threshold_upper_bound = 100
+turnover_threshold_lower_bound = 0
+change_limit_level_2 = 7
+change_limit_level_3 = 5
 
 def try_init_ts():
     if not ts_inited:

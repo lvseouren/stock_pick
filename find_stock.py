@@ -156,6 +156,9 @@ def twoyang(dates):
 				p_change3 = float(value[2][6])
 				flog.write('检查%s是否满足特征...\n' % (code))
 
+				# if code == '000565':
+				# 	print('wtf')
+
 				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, True):
 					if not isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2, p_change3):
 						if turnover1 <= constants.turnover_threshold_upper_bound and turnover1 >= constants.turnover_threshold_lower_bound:
@@ -215,9 +218,9 @@ def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change
 
 	if is_change_limit and ret:
 		if constants.strict_level > 1:
-			ret = p_change1 <= constants.change_limit_1
+			ret = p_change1 <= constants.change_limit_level_2
 		if constants.strict_level > 2:
-			ret = p_change1 <= constants.change_limit_2
+			ret = p_change1 <= constants.change_limit_level_3
 
 	return ret
 
