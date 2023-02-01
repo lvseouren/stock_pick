@@ -195,12 +195,17 @@ def twoyang(dates):
 
 # 1今天2昨天3前天
 def isSatisfy_3yang(open1, close1, volume1, p_change1, open2, close2, volume2, p_change2, open3, close3, volume3, p_change3):
-	return isSatisfy_twoyang(open1, close1, open2, close2, volume1, volume2, p_change1, p_change2) and isSatisfy_twoyang(open2, close2, open3, close3, volume2, volume3, p_change2, p_change3)
+	return isSatisfy_twoyang(open1, close1, open2, close2, volume1, volume2, p_change1, p_change2) and isSatisfy_twoyang(open2, close2, open3, close3, volume2, volume3, p_change2, p_change3, True)
 
 
 # 2是昨天，1是今天
 def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, is_change_limit = False):
-	ret = close1 > close2 and p_change2 > 0 and close1 > opens1 and volume1 > volume2
+	ret = close1 > close2 and p_change2 > 0 and volume1 > volume2
+
+	# 如果结果太多，可以注释掉下面这行，并启用209,210行代码
+	# ret = ret and close1 > opens1
+	if is_change_limit:
+		ret = ret and close1 > opens1
 	if ret and is_change_limit:
 		ret = ret and p_change1 > 2
 
