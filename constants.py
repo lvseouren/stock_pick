@@ -1,6 +1,6 @@
 import re
 import tushare as ts
-import os
+import os,time
 
 # mysql
 mysql_user = 'root'
@@ -65,3 +65,19 @@ def stock_is_st(name):
         return True
     else:
         return False
+
+def get_date_str_for_datebase(date):
+    date_str = str(date)
+    # 将日期转换为规定的字符串格式
+    date_str = time.strptime(date_str, '%Y%m%d')
+    return date_str
+
+def get_date_str_for_filename(date):
+    date_str = str(date)
+    # 将昨天日期转换为规定的字符串格式
+    date_str = time.strptime(date_str, '%Y-%m-%d')
+    return date_str
+
+def change_date_str_format(date_str, from_format, target_format):
+    date = time.strptime(date_str, from_format)
+    return time.strftime(target_format, date)
