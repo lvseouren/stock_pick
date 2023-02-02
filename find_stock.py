@@ -234,14 +234,11 @@ def get_pre_trade_day(now):
 		# 将昨天日期转换为规定的字符串格式
 		times = time.strptime(yestody, '%Y-%m-%d')
 		str_yestoday = time.strftime('%Y%m%d', times)
+		now = yestodayDate
 		if is_trade_day(str_yestoday):
 			is_find = True
 			ret = str_yestoday
-		now = yestodayDate
-	times = time.strptime(ret, '%Y%m%d')
-	ret_time = time.strftime('%Y-%m-%d', times)
-	ret_time = datetime.date(*map(int, ret_time.split('-')))
-	return ret, ret_time
+	return ret, now
 
 def is_trade_day(date):
 	pro = ts.pro_api()
