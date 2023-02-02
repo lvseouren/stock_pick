@@ -11,6 +11,10 @@ mysql_database_name = 'test2'
 report_dir = os.getcwd() + '\\report\\'
 log_dir = os.getcwd() + '\\log\\'
 
+# strategy
+strategy_3yang = '3yang'
+strategy_3yang1tiao = '3yang1tiao'
+
 # filename
 filename_3yang_list = '_list_3yang.txt'
 filename_2yang_list = '_list_2yang.txt'
@@ -67,15 +71,13 @@ def stock_is_st(name):
         return False
 
 def get_date_str_for_datebase(date):
-    date_str = str(date)
     # 将日期转换为规定的字符串格式
-    date_str = time.strptime(date_str, '%Y%m%d')
+    date_str = date.strftime('%Y%m%d')
     return date_str
 
 def get_date_str_for_filename(date):
-    date_str = str(date)
     # 将昨天日期转换为规定的字符串格式
-    date_str = time.strptime(date_str, '%Y-%m-%d')
+    date_str = date.strftime('%Y-%m-%d')
     return date_str
 
 def change_date_str_format(date_str, from_format, target_format):
