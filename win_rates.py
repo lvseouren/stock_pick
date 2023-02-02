@@ -170,7 +170,7 @@ def overall_winrate(dates):
 
 	df = ts.get_hist_data('sh', start=dates, end=dates)
 	close = df.close[0]
-	str = '%s 上证指数：%s 策略胜率：%s\n' %(dates, close, winrate)
+	str = '%s 上证指数：%s 策略胜率(上一交易日满足特征的标的在此交易日卖出盈利的概率)：%s\n' %(dates, close, winrate)
 	fwinrate.write(str)
 
 	fwinrate.close()
@@ -190,12 +190,14 @@ def realtime_overall_winrate():
 	yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
 	yestodayStr = time.strptime(yestodayStr, '%Y%m%d')
 	yestodayStr = time.strftime('%Y-%m-%d', yestodayStr)
+	# yestodayStr = '2023-01-31'
 	filename = constants.report_dir + yestodayStr + constants.filename_3yang_list
 	fp = open(filename, "r")
 	ftoday.write('%s中 以下标的最高涨幅超过1个点：\n' %filename)
 	lines = fp.readlines()
 	fp.close()
 	count = 0
+	change_sum = 0
 	for x in lines:
 		data = x.split(' ')
 		code = data[0]
@@ -204,7 +206,10 @@ def realtime_overall_winrate():
 			# 获取单只股票当天的行情
 			df = ts.get_realtime_quotes(code)
 			high = float(df.high[0])
-			if close < high and (high - close)/close > 0.01:
+			change = (high - close)/close
+			change_sum += change
+			if close < high and change > 0.01:
+
 				count += 1
 				ftoday.write('%s %s\n' % (code, df.name[0]))
 				print('%s %s' % (code, df.name[0]))
@@ -214,8 +219,8 @@ def realtime_overall_winrate():
 
 	totalCnt = len(lines)
 	winrate = count/totalCnt
-
-	str = '%s只标的中有%s可以盈利，实时胜率为%s：\n' % (totalCnt, count, winrate)
+	average_change = change_sum/totalCnt
+	str = '%s只标的中有%s可以盈利，实时胜率为%s：,平均涨幅为:%s\n' % (totalCnt, count, winrate, average_change)
 	print(str)
 	ftoday.write(str)
 	ftoday.close()

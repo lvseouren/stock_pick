@@ -6,7 +6,7 @@ import find_stock
 import email_sender
 
 #获取2阳标的最新数据，判断其当前是否满足3阳特征
-def valid_stock():
+def valid_stock_2to3():
     new_time = time.strftime('%Y-%m-%d')
     filename = constants.report_dir + new_time + constants.filename_2to3
     ftoday = open(filename, 'w')
@@ -60,7 +60,11 @@ def valid_stock():
     # ftoday.write(str)
     ftoday.close()
 
-valid_stock()
+#遍历1yang集合，找出满足2yang的标的
+def valid_stock_1to2():
+    return
+
+valid_stock_2to3()
 new_time = time.strftime('%Y-%m-%d')
 subject = '%s 2进3标的列表' % new_time
 filename = constants.report_dir + new_time + constants.filename_2to3
