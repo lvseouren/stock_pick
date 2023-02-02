@@ -188,20 +188,29 @@ def realtime_overall_winrate():
 
 	now = datetime.date(*map(int, new_time.split('-')))
 	yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
-	yestodayStr = time.strptime(yestodayStr, '%Y%m%d')
-	yestodayStr = time.strftime('%Y-%m-%d', yestodayStr)
-	# yestodayStr = '2023-01-31'
-	filename = constants.report_dir + yestodayStr + constants.filename_3yang_list
+	yestodayStr2 = time.strptime(yestodayStr, '%Y%m%d')
+	yestodayStr2 = time.strftime('%Y-%m-%d', yestodayStr2)
+	yestodayStr2 = '2023-01-30'
+	filename = constants.report_dir + yestodayStr2 + constants.filename_3yang_list
 	fp = open(filename, "r")
 	ftoday.write('%s中 以下标的最高涨幅超过1个点：\n' %filename)
 	lines = fp.readlines()
 	fp.close()
+
+	conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
+								   database=constants.mysql_database_name)
+	cursor = conn.cursor()
 	count = 0
 	change_sum = 0
 	for x in lines:
 		data = x.split(' ')
 		code = data[0]
-		close = float(data[1])
+		# close = float(data[1])
+		cursor.execute(
+			'select * from stock_' + code + ' where date=%s' % (
+				yestodayStr))  # 当天
+		value = cursor.fetchall()
+		close = float(value[0][2])
 		try:
 			# 获取单只股票当天的行情
 			df = ts.get_realtime_quotes(code)
@@ -209,7 +218,6 @@ def realtime_overall_winrate():
 			change = (high - close)/close
 			change_sum += change
 			if close < high and change > 0.01:
-
 				count += 1
 				ftoday.write('%s %s\n' % (code, df.name[0]))
 				print('%s %s' % (code, df.name[0]))
