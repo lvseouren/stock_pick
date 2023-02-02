@@ -215,21 +215,23 @@ def realtime_overall_winrate():
 			# 获取单只股票当天的行情
 			df = ts.get_realtime_quotes(code)
 			high = float(df.high[0])
-			change = (high - close)/close
+			change = round((high - close)/close * 100, 2)
 			change_sum += change
-			if close < high and change > 0.01:
+			if close < high and change > 1:
 				count += 1
-				ftoday.write('%s %s\n' % (code, df.name[0]))
-				print('%s %s' % (code, df.name[0]))
+				str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
+				ftoday.write(str)
+				print(str)
 
 		except:
 			print('%s无行情' % code)
 
 	totalCnt = len(lines)
-	winrate = count/totalCnt
-	average_change = change_sum/totalCnt
-	str = '%s只标的中有%s可以盈利，实时胜率为%s：,平均涨幅为:%s\n' % (totalCnt, count, winrate, average_change)
+	winrate = round(count/totalCnt, 2)
+	average_change = round(change_sum/totalCnt, 2)
+	str = '%s支标的,昨天买入,有%s支可以盈利，实时胜率为%s：,平均涨幅为:%s\n' % (totalCnt, count, winrate, average_change)
 	print(str)
+	print(filename)
 	ftoday.write(str)
 	ftoday.close()
 	return
