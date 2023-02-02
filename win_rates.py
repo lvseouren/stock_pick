@@ -77,16 +77,16 @@ def overall_winrate(dates):
 	yestodayStr2 = constants.change_date_str_format(yestodayStr, '%Y%m%d', '%Y-%m-%d')
 	filename = constants.report_dir + yestodayStr2 + constants.filename_3yang_list
 	strategy = '3yang'
-	realtime_overall_winrate(strategy, filename)
+	realtime_overall_winrate(dates, strategy, True, filename)
 
 	yestodayStr, yestoday = find_stock.get_pre_trade_day(yestoday)
 	yestodayStr2 = constants.change_date_str_format(yestodayStr, '%Y%m%d', '%Y-%m-%d')
 	filename = constants.report_dir + yestodayStr2 + constants.filename_3yang_list
 	strategy = '3yang1tiao'
-	realtime_overall_winrate(strategy, filename)
+	realtime_overall_winrate(dates, strategy, True, filename)
 
-# 遍历上一交易日所有的3yang标的，取得其今天的最高股价，看涨幅是否大于1个点
-def realtime_overall_winrate(strategy, stockListFileName=''):
+# 遍历集合中的标的，取得其今天的最高股价，看涨幅是否大于1个点
+def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 	new_time = time.strftime('%Y-%m-%d')
 	print('计算胜率 卖出日期：%s,策略:%s' % (new_time, strategy))
 	now = datetime.date(*map(int, new_time.split('-')))
@@ -115,7 +115,7 @@ def realtime_overall_winrate(strategy, stockListFileName=''):
 		# close = float(data[1])
 		cursor.execute(
 			'select * from stock_' + code + ' where date=%s' % (
-				yestodayStr))  # 当天
+				yestodayStr))
 		value = cursor.fetchall()
 		close = float(value[0][2])
 		try:
@@ -137,16 +137,17 @@ def realtime_overall_winrate(strategy, stockListFileName=''):
 	winrate = round(count/totalCnt, 2)
 	average_change = round(change_sum/totalCnt, 2)
 	str = '%s支标的,昨天买入,有%s支可以盈利，实时胜率为%s：,平均涨幅为:%s\n' % (totalCnt, count, winrate, average_change)
-	filename = constants.report_dir + constants.file_winrate
-	fwinrate = open(filename, 'a')
-	df = ts.get_hist_data('sh', start=new_time, end=new_time)
-	close = df.close[0]
-	fwinrate.write('%s 上证指数：%s %s策略,%s' %(new_time, close, strategy, str))
-	fwinrate.close()
 	print(str)
-	print(filename)
+	print(stockListFileName)
 	ftoday.write(str)
 	ftoday.close()
+	if wirte_report:
+		filename = constants.report_dir + constants.file_winrate
+		fwinrate = open(filename, 'a')
+		df = ts.get_hist_data('sh', start=new_time, end=new_time)
+		close = df.close[0]
+		fwinrate.write('%s 上证指数：%s %s策略,%s' %(new_time, close, strategy, str))
+		fwinrate.close()
 	return
 
 # realtime_overall_winrate()
