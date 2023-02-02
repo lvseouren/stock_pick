@@ -18,6 +18,7 @@ filename_3yang = '_3yang.txt'
 filename_2yang = '_2yang.txt'
 file_winrate = 'winrate_monitor.txt'
 filename_2to3 = '_2to3.txt'
+filename_3yang1tiao = '_3yang1tiao.txt'
 
 ts_inited = False
 
@@ -33,6 +34,9 @@ turnover_threshold_lower_bound = 1
 change_limit_level_2 = 7
 change_limit_level_3 = 5
 change_limit_2to3 = 8
+
+change_limit_3yang1tiao_lower_bound = 1
+change_limit_3yang1tiao_upper_bound = 2
 
 def try_init_ts():
     if not ts_inited:
