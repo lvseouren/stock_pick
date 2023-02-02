@@ -88,6 +88,7 @@ def overall_winrate(dates):
 # 遍历上一交易日所有的3yang标的，取得其今天的最高股价，看涨幅是否大于1个点
 def realtime_overall_winrate(strategy, stockListFileName=''):
 	new_time = time.strftime('%Y-%m-%d')
+	print('计算胜率 卖出日期：%s,策略:%s' % (new_time, strategy))
 	now = datetime.date(*map(int, new_time.split('-')))
 	yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
 
