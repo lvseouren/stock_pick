@@ -143,6 +143,9 @@ def twoyang(dates):
 				p_change1 = float(value[0][6])
 				volume1 = float(value[0][5])
 				turnover1 = float(value[0][7])
+				if p_change1 > constants.change_limit_2to3:
+					continue
+
 				# 昨天的。。。。。
 				opens2 = float(value[1][1])
 				close2 = float(value[1][2])

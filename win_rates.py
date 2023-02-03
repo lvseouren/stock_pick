@@ -77,15 +77,15 @@ def overall_winrate(dates):
 	yestodayStr2 = constants.change_date_str_format(yestodayStr, '%Y%m%d', '%Y-%m-%d')
 	filename = constants.report_dir + yestodayStr2 + constants.filename_3yang_list
 	strategy = '3yang'
-	realtime_overall_winrate(dates, strategy, True, filename)
+	realtime_overall_winrate(strategy, True, filename)
 
 	yestodayStr, yestoday = find_stock.get_pre_trade_day(yestoday)
 	yestodayStr2 = constants.change_date_str_format(yestodayStr, '%Y%m%d', '%Y-%m-%d')
 	filename = constants.report_dir + yestodayStr2 + constants.filename_3yang_list
 	strategy = '3yang1tiao'
-	realtime_overall_winrate(dates, strategy, True, filename)
+	realtime_overall_winrate(strategy, True, filename)
 
-# 遍历集合中的标的，取得其今天的最高股价，看涨幅是否大于1个点
+# 遍历集合中的标的，取得其今天的最高股价以及昨天的收盘价，看涨幅是否大于1个点
 def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 	new_time = time.strftime('%Y-%m-%d')
 	print('计算胜率 卖出日期：%s,策略:%s' % (new_time, strategy))
