@@ -114,4 +114,4 @@ valid_stock_2to3()
 new_time = time.strftime('%Y-%m-%d')
 subject = '%s 2进3标的列表' % new_time
 filename = constants.report_dir + new_time + constants.filename_2to3
-email_sender.send_email(subject, filename, "2进3标的数据")
+email_sender.send_email(subject, [filename], ["2进3标的数据"])

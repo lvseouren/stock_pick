@@ -31,15 +31,11 @@ if __name__ == '__main__':
 		os.mkdir(constants.log_dir)
 
 	todays = time.strftime('%Y-%m-%d')
-	win_rates.rate(todays)
+	# win_rates.rate(todays)
 	str = '今天的股票行情来啦(strict_level=%s)' % (constants.strict_level)
-	filename = test_report_dir + todays + constants.filename_2yang
-	subject = str + '(2yang)'
-	email_sender.send_email(subject, filename, '_2yang列表')
-	subject = str + '(3yang)'
-	filename = test_report_dir + todays + constants.filename_3yang
-	email_sender.send_email(subject, filename, '_3yang列表')
-	subject = '策略胜率追踪'
-	filename = constants.get_winrate_filename_by_stategy(constants.strategy_3yang)
-	email_sender.send_email(subject, filename)
+	filename1 = test_report_dir + todays + constants.filename_2yang
+	filename2 = test_report_dir + todays + constants.filename_3yang
+	subject = str
+	filename3 = constants.get_winrate_filename_by_stategy(constants.strategy_3yang)
+	email_sender.send_email(subject, [filename1, filename2, filename3], ['_2yang列表', '_3yang列表', '胜率信息'] )
 	wechat_sender.send_msg('狄拉克海捕鱼人', 'cfmm已发送邮箱，请查收')

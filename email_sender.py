@@ -4,11 +4,8 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header, make_header
 import time
 
-def send_email(subject, att_file_name, att_suffix = ' '):
+def send_email(subject, att_file_names, att_suffixs):
     todays = time.strftime('%Y-%m-%d')
-    f = open(att_file_name, 'rb')
-    mail_body = f.read()
-    f.close()
     # 设置自己邮件服务器和账号密码
     smtpserver = 'smtp.163.com'
     user = 'huiseouren17@163.com'
@@ -17,13 +14,18 @@ def send_email(subject, att_file_name, att_suffix = ' '):
     sender = user
     receiver = '602633512@qq.com'
 
+    index = 0
     msg = MIMEMultipart('mixed')
-    att = MIMEText(mail_body, 'txt', 'utf-8')
-    att['Content-Type'] = 'application/octet-stream'
-    name = '%s%s.txt' %(todays, att_suffix)
-    att.add_header("Content-Disposition", "attachment", filename=("gbk", "", name))
-
-    msg.attach(att)
+    for att_file_name in att_file_names:
+        f = open(att_file_name, 'rb')
+        mail_body = f.read()
+        f.close()
+        att = MIMEText(mail_body, 'txt', 'utf-8')
+        att['Content-Type'] = 'application/octet-stream'
+        name = '%s%s.txt' %(todays, att_suffixs[index])
+        att.add_header("Content-Disposition", "attachment", filename=("gbk", "", name))
+        msg.attach(att)
+        index+=1
 
     msg['From'] = user
     msg['To'] = receiver
@@ -34,5 +36,5 @@ def send_email(subject, att_file_name, att_suffix = ' '):
     smtp.login(user, password)
     smtp.sendmail(sender, receiver, msg.as_string())
     receiver2 = '942259616@qq.com'
-    smtp.sendmail(sender, receiver2, msg.as_string())
+    # smtp.sendmail(sender, receiver2, msg.as_string())
     smtp.quit()
