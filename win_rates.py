@@ -128,7 +128,7 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 				count += 1
 				str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
 				ftoday.write(str)
-				print(str)
+				# print(str)
 
 		except:
 			print('%s无行情' % code)
@@ -137,8 +137,8 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 	winrate = round(count/totalCnt, 2)
 	average_change = round(change_sum/totalCnt, 2)
 	str = '%s支标的,昨天买入,有%s支可以盈利，实时胜率为%s：,平均涨幅为:%s\n' % (totalCnt, count, winrate, average_change)
-	print(str)
 	print(stockListFileName)
+	print(str)
 	ftoday.write(str)
 	ftoday.close()
 	if wirte_report:

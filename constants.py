@@ -14,6 +14,7 @@ log_dir = os.getcwd() + '\\log\\'
 # strategy
 strategy_3yang = '3yang'
 strategy_3yang1tiao = '3yang1tiao'
+strategy_2yang = '2yang'
 
 # filename
 filename_3yang_list = '_list_3yang.txt'
@@ -28,11 +29,11 @@ ts_inited = False
 
 # limit
 # 默认值
-turnover_threshold_upper_bound_default = 10
+turnover_threshold_upper_bound_default = 100
 turnover_threshold_lower_bound_default = 2
 
 strict_level = 2
-turnover_threshold_upper_bound = 10
+turnover_threshold_upper_bound = 100
 turnover_threshold_lower_bound = 1
 
 change_limit_level_2 = 7
