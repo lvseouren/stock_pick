@@ -10,6 +10,7 @@ mysql_database_name = 'test2'
 # dir
 report_dir = os.getcwd() + '\\report\\'
 log_dir = os.getcwd() + '\\log\\'
+data_dir = os.getcwd() + '\\data\\'
 
 # strategy
 strategy_3yang = '3yang'
@@ -24,6 +25,7 @@ filename_2yang = '_2yang.txt'
 file_winrate = 'winrate_monitor.txt'
 filename_2to3 = '_2to3.txt'
 filename_3yang1tiao = '_3yang1tiao.txt'
+filename_position = 'position.txt'
 
 ts_inited = False
 
