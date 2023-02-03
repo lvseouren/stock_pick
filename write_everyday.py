@@ -35,6 +35,7 @@ def everystock():
 				mysqlCmd = 'insert into stock_'+code+ ' (date,open,close,high,low,volume,p_change, turnover) values (%s,%s,%s,%s,%s,%s,%s,%s)' % (time_new,df.open[0],df.close[0],df.high[0],df.low[0],df.volume[0],df.p_change[0], df.turnover[0])
 				# mysqlCmd = 'update stock_'+ code + ' set turnover=%s where date =%s' %(df.turnover[0], time_new)
 				cursor.execute(mysqlCmd)
+					# mysqlCmd = 'update stock_'+ code + ' set turnover=%s, open =%s, close=%s, high =%s, low=%s,volume=%s,p_change=%s where date =%s' %(df.turnover[0], df.open[i],df.close[i],df.high[i],df.low[i],df.volume[i],df.p_change[i], time_new)
 				
 				print('%s的数据插入完成'%code)
 				a += 1
