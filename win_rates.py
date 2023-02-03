@@ -10,11 +10,13 @@ import find_stock
 def rate(todays):
 	print(todays)
 	overall_winrate(todays)
-	#将满足阳包阴的这些股票，以及它们之前满足的时候收益率都写到报告里面方便查看整体情况
 	count,a,count2 = find_stock.valid_stock(todays)
+	# a = 1
+	# count = ['300322']
+	# count2 = []
 	dir_repor = constants.report_dir
 	filename = dir_repor + todays + constants.filename_2yang
-	fp = open(filename,'a')
+	fp = open(filename,'w')
 	fp.write('总共找到%d支满足条件的股票分别是\n%s\n'%(a,count))
 	filename2 = dir_repor + todays + constants.filename_3yang
 	fp2 = open(filename2, 'w')
@@ -30,10 +32,10 @@ def rate(todays):
 		cursor.execute('select * from stock_'+x+' order by date desc')
 		value = cursor.fetchall()
 	#	print(value)
-		for i in range(0,len(value)):  #遍历这支股票的所有天数
-			total_3yang_times = 0
-			total_3yang_win_times = 0
-			winrate = -1
+		winrate = -1
+		total_3yang_times = 0
+		total_3yang_win_times = 0
+		for i in range(1,len(value)):  #遍历这支股票的所有天数
 			try:
 				dates = value[i][0]
 				opens1 = float(value[i][1])  #第i行的第一列
@@ -48,22 +50,24 @@ def rate(todays):
 				volume1 = float(value[i][5])
 				volume2 = float(value[i + 1][5])  # 第i行的第5列
 				volume3 = float(value[i + 2][5])
-				high4 = float[value[i+3][3]]
 
-				if find_stock.isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, True):
-					if find_stock.isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2, p_change3):
-						total_3yang_times+=1
-						if high4 > close3:
-							total_3yang_win_times+=1
+				next_high = float(value[i-1][3])
+
+				if find_stock.isSatisfy_3yang(opens1, close1, volume1, p_change1, opens2, close2, volume2, p_change2, opens3, close3, volume3, p_change3):
+						total_3yang_times += 1
+						change = next_high - close1
+						change = change / close1 * 100
+						change = round(change, 2)
+						if change >= 1:
+							total_3yang_win_times += 1
 
 			except:
-				if total_3yang_times > 0:
-					winrate = total_3yang_win_times/total_3yang_times
-				pass
-	#			print('%s前3个月无满足条件的情况'%x)
-			if total_3yang_times > 0:
-				winrate = total_3yang_win_times / total_3yang_times
-		fp.write('%s在%s之前胜率为%d\n'%(x,dates,winrate))
+				print('%s wtf'%x)
+		if total_3yang_times > 0:
+			winrate = total_3yang_win_times / total_3yang_times
+		str = '%s在%s之前胜率为%d\n'%(x,todays,winrate)
+		fp.write(str)
+		print(str)
 
 
 	fp.close()
@@ -71,19 +75,9 @@ def rate(todays):
 	cursor.close()
 
 def overall_winrate(dates):
-	new_time = dates
-	now = datetime.date(*map(int, new_time.split('-')))
-	yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
-	yestodayStr2 = constants.change_date_str_format(yestodayStr, '%Y%m%d', '%Y-%m-%d')
-	filename = constants.report_dir + yestodayStr2 + constants.filename_3yang_list
-	strategy = '3yang'
-	realtime_overall_winrate(strategy, True, filename)
-
-	yestodayStr, yestoday = find_stock.get_pre_trade_day(yestoday)
-	yestodayStr2 = constants.change_date_str_format(yestodayStr, '%Y%m%d', '%Y-%m-%d')
-	filename = constants.report_dir + yestodayStr2 + constants.filename_3yang_list
-	strategy = '3yang1tiao'
-	realtime_overall_winrate(strategy, True, filename)
+	cal_strategy_winrate(constants.strategy_3yang, dates)
+	cal_strategy_winrate(constants.strategy_3yang1tiao, dates)
+	cal_strategy_winrate(constants.strategy_2yang, dates)
 
 # 遍历集合中的标的，取得其今天的最高股价以及昨天的收盘价，看涨幅是否大于1个点
 def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
@@ -149,6 +143,31 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 		fwinrate.write('%s 上证指数：%s %s策略,%s' %(new_time, close, strategy, str))
 		fwinrate.close()
 	return
+
+def get_date_str_by_strategy(strategy, dates):
+    now = datetime.date(*map(int, dates.split('-')))
+    yestoday_str, yestoday = find_stock.get_pre_trade_day(now)
+    if strategy == constants.strategy_3yang:
+        return constants.get_date_str_for_filename(yestoday)
+    elif strategy == constants.strategy_3yang1tiao:
+        yestoday_str, yestoday = find_stock.get_pre_trade_day(yestoday)
+        return constants.get_date_str_for_filename(yestoday)
+    else:
+        return constants.get_date_str_for_filename(yestoday)
+
+def get_filename_by_strategy(strategy):
+    if strategy == constants.strategy_3yang or strategy == constants.strategy_3yang1tiao:
+        return constants.filename_3yang_list
+    elif strategy == constants.strategy_2yang:
+        return constants.filename_2yang_list
+
+def cal_strategy_winrate(strategy, dates):
+    filename = ''
+    # strategy = constants.strategy_3yang1tiao
+    # dates = time.strftime('%Y-%m-%d')
+    date_str = get_date_str_by_strategy(strategy, dates)
+    filename = constants.report_dir + date_str + get_filename_by_strategy(strategy)
+    realtime_overall_winrate(strategy, False, filename)
 
 # realtime_overall_winrate()
 #rate('2018-03-16')

@@ -42,7 +42,7 @@ change_limit_level_2 = 7
 change_limit_level_3 = 5
 change_limit_2to3 = 8
 
-change_limit_3yang1tiao_lower_bound = 1
+change_limit_3yang1tiao_lower_bound = 0
 change_limit_3yang1tiao_upper_bound = 2
 
 def try_init_ts():

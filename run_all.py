@@ -43,3 +43,6 @@ if __name__ == '__main__':
 	subject = str + '(3yang)'
 	filename = test_report_dir + todays + constants.filename_3yang
 	email_sender.send_email(subject, filename, '_3yang列表')
+	subject = '策略胜率追踪'
+	filename = test_report_dir + 'winrate_monitor.txt'
+	email_sender.send_email(subject, filename)
