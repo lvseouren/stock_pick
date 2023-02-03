@@ -10,6 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 import tushare as ts
 import email_sender
+import wechat_sender
 
 # #获取最新的文件
 # def new_file(test_report_dir):
@@ -39,5 +40,6 @@ if __name__ == '__main__':
 	filename = test_report_dir + todays + constants.filename_3yang
 	email_sender.send_email(subject, filename, '_3yang列表')
 	subject = '策略胜率追踪'
-	filename = test_report_dir + constants.file_winrate
+	filename = constants.get_winrate_filename_by_stategy(constants.strategy_3yang)
 	email_sender.send_email(subject, filename)
+	wechat_sender.send_msg('狄拉克海捕鱼人', 'cfmm已发送邮箱，请查收')

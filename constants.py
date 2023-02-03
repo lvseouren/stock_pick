@@ -16,13 +16,14 @@ data_dir = os.getcwd() + '\\data\\'
 strategy_3yang = '3yang'
 strategy_3yang1tiao = '3yang1tiao'
 strategy_2yang = '2yang'
+strategy_list = [strategy_3yang, strategy_3yang1tiao, strategy_2yang]
 
 # filename
 filename_3yang_list = '_list_3yang.txt'
 filename_2yang_list = '_list_2yang.txt'
 filename_3yang = '_3yang.txt'
 filename_2yang = '_2yang.txt'
-file_winrate = 'winrate_monitor.txt'
+file_winrate = 'winrate_monitor'
 filename_2to3 = '_2to3.txt'
 filename_3yang1tiao = '_3yang1tiao.txt'
 filename_position = 'position.txt'
@@ -86,3 +87,7 @@ def get_date_str_for_filename(date):
 def change_date_str_format(date_str, from_format, target_format):
     date = time.strptime(date_str, from_format)
     return time.strftime(target_format, date)
+
+def get_winrate_filename_by_stategy(strategy):
+    filename = data_dir + file_winrate + '_' + strategy + '.txt'
+    return filename

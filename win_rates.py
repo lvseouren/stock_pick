@@ -1,5 +1,6 @@
 #这个文件可以联合find_stock单独运行，输入todays的日期可以直接查找当天出现过的股票
 import datetime
+import os
 import re
 import time
 import tushare as ts
@@ -66,7 +67,7 @@ def rate(todays):
 				print('%s wtf'%x)
 		if total_3yang_times > 0:
 			winrate = total_3yang_win_times / total_3yang_times
-		winrate_str = winrate > 0 and '%s%%' % (winrate * 100) or '无数据'
+		winrate_str = winrate > 0 and '%s%%！！！！！！！！！！！！！！！' % (winrate * 100) or '无数据'
 		str = '%s 在 %s 之前胜率为:%s\n'%(x,todays,winrate_str)
 		fp.write(str)
 		print(str)
@@ -77,28 +78,25 @@ def rate(todays):
 	cursor.close()
 
 def overall_winrate(dates):
-	log_list = []
-	log = cal_strategy_winrate(constants.strategy_3yang, dates, True)
-	log_list.append(log)
-	log = cal_strategy_winrate(constants.strategy_3yang1tiao, dates, True)
-	log_list.append(log)
-	log = cal_strategy_winrate(constants.strategy_2yang, dates, True)
-	log_list.append(log)
-
-	filename = constants.report_dir + constants.file_winrate
-	fp = open(filename, "r")
-	lines = fp.readlines()
-	fp.close()
-	lastLines = lines[len(lines) - 1]
-	if re.findall(dates, lastLines):
-		return
-	fwinrate = open(filename, 'a')
 	df = ts.get_hist_data('sh', start=dates, end=dates)
 	close = df.close[0]
-	for x in log_list:
-		str = '%s 上证指数:%s; %s' % (dates, close, x)
+	for strategy in constants.strategy_list:
+		log = cal_strategy_winrate(strategy, dates, True)
+		filename = constants.get_winrate_filename_by_stategy(strategy)
+		is_already_have_data = False
+		if os.path.exists(filename):
+			fp = open(filename, "r")
+			lines = fp.readlines()
+			fp.close()
+			lastLines = lines[len(lines) - 1]
+			if re.findall(dates, lastLines):
+				is_already_have_data = True
+		if is_already_have_data:
+			return
+		fwinrate = open(filename, 'a')
+		str = '%s 上证指数:%s; %s' % (dates, close, log)
 		fwinrate.write(str)
-	fwinrate.close()
+		fwinrate.close()
 
 # 遍历集合中的标的，取得其今天的最高股价以及昨天的收盘价，看涨幅是否大于1个点
 def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
@@ -178,9 +176,6 @@ def get_filename_by_strategy(strategy):
         return constants.filename_2yang_list
 
 def cal_strategy_winrate(strategy, dates, wirte_report=False):
-    filename = ''
-    # strategy = constants.strategy_3yang1tiao
-    # dates = time.strftime('%Y-%m-%d')
     date_str = get_date_str_by_strategy(strategy, dates)
     filename = constants.report_dir + date_str + get_filename_by_strategy(strategy)
     return realtime_overall_winrate(strategy, wirte_report, filename)
