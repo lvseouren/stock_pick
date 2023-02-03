@@ -29,12 +29,7 @@ if __name__ == '__main__':
 	if not os.path.exists(constants.log_dir):
 		os.mkdir(constants.log_dir)
 
-	#如果执行的不是当天的日期的话请将第一个todays注释掉
 	todays = time.strftime('%Y-%m-%d')
-	# todays = '2023-01-30'
-	#如果不是交易日执行的话write_everyday会报错，会报tushare获取不到行情，所以请手动输入日期并将下面一行注释掉
-	# write_everyday.everystock()
-	time.sleep(3)
 	win_rates.rate(todays)
 	str = '今天的股票行情来啦(strict_level=%s)' % (constants.strict_level)
 	filename = test_report_dir + todays + constants.filename_2yang
@@ -44,5 +39,5 @@ if __name__ == '__main__':
 	filename = test_report_dir + todays + constants.filename_3yang
 	email_sender.send_email(subject, filename, '_3yang列表')
 	subject = '策略胜率追踪'
-	filename = test_report_dir + 'winrate_monitor.txt'
+	filename = test_report_dir + constants.file_winrate
 	email_sender.send_email(subject, filename)

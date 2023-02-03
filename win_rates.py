@@ -1,5 +1,6 @@
 #这个文件可以联合find_stock单独运行，输入todays的日期可以直接查找当天出现过的股票
 import datetime
+import re
 import time
 import tushare as ts
 import mysql.connector
@@ -65,7 +66,8 @@ def rate(todays):
 				print('%s wtf'%x)
 		if total_3yang_times > 0:
 			winrate = total_3yang_win_times / total_3yang_times
-		str = '%s在%s之前胜率为%d\n'%(x,todays,winrate)
+		winrate_str = winrate > 0 and '%s%%' % (winrate * 100) or '无数据'
+		str = '%s 在 %s 之前胜率为:%s\n'%(x,todays,winrate_str)
 		fp.write(str)
 		print(str)
 
@@ -75,9 +77,28 @@ def rate(todays):
 	cursor.close()
 
 def overall_winrate(dates):
-	cal_strategy_winrate(constants.strategy_3yang, dates)
-	cal_strategy_winrate(constants.strategy_3yang1tiao, dates)
-	cal_strategy_winrate(constants.strategy_2yang, dates)
+	log_list = []
+	log = cal_strategy_winrate(constants.strategy_3yang, dates, True)
+	log_list.append(log)
+	log = cal_strategy_winrate(constants.strategy_3yang1tiao, dates, True)
+	log_list.append(log)
+	log = cal_strategy_winrate(constants.strategy_2yang, dates, True)
+	log_list.append(log)
+
+	filename = constants.report_dir + constants.file_winrate
+	fp = open(filename, "r")
+	lines = fp.readlines()
+	fp.close()
+	lastLines = lines[len(lines) - 1]
+	if re.findall(dates, lastLines):
+		return
+	fwinrate = open(filename, 'a')
+	df = ts.get_hist_data('sh', start=dates, end=dates)
+	close = df.close[0]
+	for x in log_list:
+		str = '%s 上证指数:%s; %s' % (dates, close, x)
+		fwinrate.write(str)
+	fwinrate.close()
 
 # 遍历集合中的标的，取得其今天的最高股价以及昨天的收盘价，看涨幅是否大于1个点
 def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
@@ -130,18 +151,13 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 	totalCnt = len(lines)
 	winrate = round(count/totalCnt, 2)
 	average_change = round(change_sum/totalCnt, 2)
-	str = '%s支标的,昨天买入,有%s支可以盈利，实时胜率为%s：,平均涨幅为:%s\n' % (totalCnt, count, winrate, average_change)
+	str = '%s支标的,昨买今卖,有%s支可以盈利，胜率为%s：,平均涨幅为:%s\n' % (totalCnt, count, winrate, average_change)
 	print(stockListFileName)
 	print(str)
 	ftoday.write(str)
 	ftoday.close()
 	if wirte_report:
-		filename = constants.report_dir + constants.file_winrate
-		fwinrate = open(filename, 'a')
-		df = ts.get_hist_data('sh', start=new_time, end=new_time)
-		close = df.close[0]
-		fwinrate.write('%s 上证指数：%s %s策略,%s' %(new_time, close, strategy, str))
-		fwinrate.close()
+		return '策略[%s],%s' %(strategy, str)
 	return
 
 def get_date_str_by_strategy(strategy, dates):
@@ -161,13 +177,13 @@ def get_filename_by_strategy(strategy):
     elif strategy == constants.strategy_2yang:
         return constants.filename_2yang_list
 
-def cal_strategy_winrate(strategy, dates):
+def cal_strategy_winrate(strategy, dates, wirte_report=False):
     filename = ''
     # strategy = constants.strategy_3yang1tiao
     # dates = time.strftime('%Y-%m-%d')
     date_str = get_date_str_by_strategy(strategy, dates)
     filename = constants.report_dir + date_str + get_filename_by_strategy(strategy)
-    realtime_overall_winrate(strategy, False, filename)
+    return realtime_overall_winrate(strategy, wirte_report, filename)
 
 # realtime_overall_winrate()
 #rate('2018-03-16')
