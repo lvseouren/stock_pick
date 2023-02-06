@@ -122,6 +122,9 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 	cursor = conn.cursor()
 	count = 0
 	change_sum = 0
+	change_sum_open = 0
+	change_sum_close = 0
+
 	for x in lines:
 		data = x.split(' ')
 		code = data[0]
@@ -137,6 +140,12 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 			high = float(df.high[0])
 			change = round((high - close)/close * 100, 2)
 			change_sum += change
+			open_today = float(df.open[0])
+			change_open = round((open_today - close)/close * 100, 2)
+			change_sum_open += change_open
+			close_today = float(df.price[0])
+			change_close = round((close_today - close) * 100, 2)
+			change_sum_close += change_close
 			if close < high and change > 1:
 				count += 1
 				str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
@@ -149,7 +158,9 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 	totalCnt = len(lines)
 	winrate = round(count/totalCnt, 2)
 	average_change = round(change_sum/totalCnt, 2)
-	str = '%s支标的,昨买今卖,有%s支可以盈利，胜率为%s：,平均涨幅为:%s\n' % (totalCnt, count, winrate, average_change)
+	average_change_open = round(change_sum_open/totalCnt, 2)
+	average_change_close = round(change_sum_close/totalCnt, 2)
+	str = '%s支标的,昨买今卖,有%s支可以盈利，胜率为%s：,最高价格平均涨幅为:%s, 开盘价平均涨幅为：%s, 收盘价平均涨幅为：%s\n' % (totalCnt, count, winrate, average_change, average_change_open, average_change_close)
 	print(stockListFileName)
 	print(str)
 	ftoday.write(str)
