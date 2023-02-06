@@ -38,4 +38,4 @@ if __name__ == '__main__':
 	subject = str
 	filename3 = constants.get_winrate_filename_by_stategy(constants.strategy_3yang)
 	email_sender.send_email(subject, [filename1, filename2, filename3], ['_2yang列表', '_3yang列表', '胜率信息'] )
-	wechat_sender.send_msg('狄拉克海捕鱼人', 'cfmm已发送邮箱，请查收')
+	# wechat_sender.send_msg('狄拉克海捕鱼人', 'cfmm已发送邮箱，请查收')
