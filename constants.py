@@ -30,6 +30,9 @@ filename_position = 'position.txt'
 
 ts_inited = False
 
+# wechat
+wechat_target_me = '狄拉克海捕鱼人'
+
 # limit
 # 默认值
 turnover_threshold_upper_bound_default = 100

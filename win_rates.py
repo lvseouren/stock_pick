@@ -31,7 +31,9 @@ def rate(todays):
 	#遍历满足条件的这些股票
 	for x in count:
 		#从数据库里挑出它们的行情
-		cursor.execute('select * from stock_'+x+' order by date desc')
+		code = x[0]
+		name = x[1]
+		cursor.execute('select * from stock_'+code+' order by date desc')
 		value = cursor.fetchall()
 	#	print(value)
 		winrate = -1
@@ -68,7 +70,7 @@ def rate(todays):
 		if total_3yang_times > 0:
 			winrate = total_3yang_win_times / total_3yang_times
 		winrate_str = winrate > 0 and '%s%%！！！！！！！！！！！！！！！' % (winrate * 100) or '无数据'
-		str = '%s 在 %s 之前胜率为:%s\n'%(x,todays,winrate_str)
+		str = '%s %s在 %s 之前胜率为:%s\n'%(code, name,todays,winrate_str)
 		fp.write(str)
 		print(str)
 
@@ -144,14 +146,13 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 			change_open = round((open_today - close)/close * 100, 2)
 			change_sum_open += change_open
 			close_today = float(df.price[0])
-			change_close = round((close_today - close) * 100, 2)
+			change_close = round((close_today - close)/close * 100, 2)
 			change_sum_close += change_close
 			if close < high and change > 1:
 				count += 1
 				str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
 				ftoday.write(str)
-				# print(str)
-
+				print(str)
 		except:
 			print('%s无行情' % code)
 

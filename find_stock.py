@@ -173,7 +173,7 @@ def twoyang(dates):
 							flog.write('%s票%s的收盘价价是%s\n' % (code, str_yestoday, close2))
 							flog.write('%s票%s的成交量是%s\n' % (code, str_yestoday, volume2))
 							# 将满足条件的股票代码放进列表中，统计当天满足条件的股票
-							count.append(code)
+							count.append([code, name])
 							a += 1
 						else:
 							print('%s 换手率为%s不在区间内[%s,%s]' % (code, turnover1, constants.turnover_threshold_lower_bound, constants.turnover_threshold_upper_bound))
