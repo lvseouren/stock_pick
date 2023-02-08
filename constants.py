@@ -49,6 +49,8 @@ change_limit_2to3 = 8
 change_limit_3yang1tiao_lower_bound = 0
 change_limit_3yang1tiao_upper_bound = 2
 
+position_alert_change = 1
+
 def try_init_ts():
     if not ts_inited:
         ts.set_token('ed4a03d581a87d8a6f95cf1f06d31bec659d785e9bf410008fe91493')

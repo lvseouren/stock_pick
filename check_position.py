@@ -29,11 +29,11 @@ def check_position(is_need_alert=False):
                 change = round((price - pre_close)/pre_close * 100, 2)
                 str = '%s %s:%s(%s)' %(code, name, price, change)
                 print(str)
-                if is_need_alert and change > 2:
+                if is_need_alert and change > constants.position_alert_change:
                     wechat_sender.send_msg(constants.wechat_target_me, str)
             except:
                 print('wtf')
         print('\n\n')
         time.sleep(5)
 
-check_position()
+check_position(True)
