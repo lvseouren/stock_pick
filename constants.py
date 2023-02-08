@@ -2,6 +2,9 @@ import re
 import tushare as ts
 import os,time
 
+# ml
+
+
 # mysql
 mysql_user = 'root'
 mysql_password = 'abc123'
@@ -11,6 +14,8 @@ mysql_database_name = 'test2'
 report_dir = os.getcwd() + '\\report\\'
 log_dir = os.getcwd() + '\\log\\'
 data_dir = os.getcwd() + '\\data\\'
+ml_dir = os.getcwd()
+ml_data_dir = ml_dir + '\\data\\'
 
 # strategy
 strategy_3yang = '3yang'
@@ -27,6 +32,7 @@ file_winrate = 'winrate_monitor'
 filename_2to3 = '_2to3.txt'
 filename_3yang1tiao = '_3yang1tiao.txt'
 filename_position = 'position.txt'
+filename_ml_data = 'test.xlsx'
 
 ts_inited = False
 

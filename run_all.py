@@ -5,7 +5,7 @@ import time
 import os
 import tushare as ts
 import email_sender
-import wechat_sender
+# import wechat_sender
 
 if __name__ == '__main__':
 	#初始化tshare
