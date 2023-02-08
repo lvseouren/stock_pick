@@ -95,7 +95,7 @@ def valid_stock_3yang1tiao():
             df = ts.get_realtime_quotes(code)
 
             curr_price = float(df.price[0])
-            curr_change = (curr_price - close) / close * 100
+            curr_change = round((curr_price - close) / close * 100, 2)
             if curr_change >= constants.change_limit_3yang1tiao_lower_bound and curr_change <= constants.change_limit_3yang1tiao_upper_bound:
                 count+=1
                 ftoday.write('%s %s\n' % (code, df.name[0]))
@@ -194,10 +194,10 @@ def valid_stock_3yang():
                 f_err_log.write(
                     '%s停牌无数据,或者请查看sql语句是否正确\n' % value_code[i][0])  # 一般不用管，除非执行好多天的数据都为0时那可能输sql语句有问题了
 
-# valid_stock_3yang()
 valid_stock_2to3()
 print('\n\n\n')
-# valid_stock_3yang1tiao()
+# valid_stock_3yang()
+valid_stock_3yang1tiao()
 new_time = time.strftime('%Y-%m-%d')
 subject = '%s 2进3标的列表' % new_time
 filename = constants.report_dir + new_time + constants.filename_2to3

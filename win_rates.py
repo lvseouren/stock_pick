@@ -152,7 +152,8 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 				count += 1
 				str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
 				ftoday.write(str)
-				print(str)
+				if strategy == constants.strategy_3yang:
+					print(str)
 		except:
 			print('%s无行情' % code)
 

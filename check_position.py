@@ -11,7 +11,7 @@ def print_sh_info():
     change = round(diff / pre_close * 100, 2)
     print('上证指数:%s, %s%s(%s)\n' % (price, symbol, diff, change))
 
-def check_position():
+def check_position(is_need_alert=False):
     stockListFileName = constants.data_dir + constants.filename_position
     fp = open(stockListFileName, "r")
     lines = fp.readlines()
@@ -29,7 +29,7 @@ def check_position():
                 change = round((price - pre_close)/pre_close * 100, 2)
                 str = '%s %s:%s(%s)' %(code, name, price, change)
                 print(str)
-                if change > 2:
+                if is_need_alert and change > 2:
                     wechat_sender.send_msg(constants.wechat_target_me, str)
             except:
                 print('wtf')
