@@ -50,6 +50,7 @@ change_limit_3yang1tiao_lower_bound = 0
 change_limit_3yang1tiao_upper_bound = 2
 
 position_alert_change = 1
+check_position_interval = 5
 
 def try_init_ts():
     if not ts_inited:

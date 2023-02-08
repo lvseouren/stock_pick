@@ -25,6 +25,7 @@ def valid_stock_2to3():
     fp.close()
 
     count = 0
+    list = []
     ##使用for循环遍历所有的2yang股票
     for x in lines:
         data = x.split(' ')
@@ -46,8 +47,9 @@ def valid_stock_2to3():
 
             if volume < curr_volume and close < curr_price:
                 count+=1
-                ftoday.write('%s %s %s %s(%s)\n' %(code, curr_price, curr_volume, df.name[0], curr_change))
+                ftoday.write('%s %s %s %s(涨幅:%s)\n' %(code, curr_price, curr_volume, df.name[0], curr_change))
                 print('%s %s满足特征' %(code, name))
+                list.append([code, name])
             else:
                 str = ''
                 if volume > curr_volume:
@@ -60,6 +62,7 @@ def valid_stock_2to3():
             print('%s无行情' % code)
     str = '\n共找到%s支满足特征的标的' %count
     print(str)
+    print("\n%s" % list)
     # ftoday.write(str)
     ftoday.close()
 
@@ -197,7 +200,7 @@ def valid_stock_3yang():
 valid_stock_2to3()
 print('\n\n\n')
 # valid_stock_3yang()
-valid_stock_3yang1tiao()
+# valid_stock_3yang1tiao()
 new_time = time.strftime('%Y-%m-%d')
 subject = '%s 2进3标的列表' % new_time
 filename = constants.report_dir + new_time + constants.filename_2to3
