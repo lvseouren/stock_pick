@@ -25,6 +25,7 @@ def valid_stock_2to3():
     fp.close()
 
     count = 0
+    list = []
     ##使用for循环遍历所有的2yang股票
     for x in lines:
         data = x.split(' ')
@@ -37,7 +38,7 @@ def valid_stock_2to3():
             df = ts.get_realtime_quotes(code)
 
             curr_price = float(df.price[0])
-            curr_change = (curr_price - close)/close * 100
+            curr_change = round((curr_price - close)/close * 100, 2)
             if curr_change > constants.change_limit_2to3:
                 print('%s %s涨幅(%s)超过阈值(%s), pass' %(code, name, curr_change, constants.change_limit_2to3))
                 continue
@@ -46,8 +47,9 @@ def valid_stock_2to3():
 
             if volume < curr_volume and close < curr_price:
                 count+=1
-                ftoday.write('%s %s %s %s\n' %(code, curr_price, curr_volume, df.name[0]))
+                ftoday.write('%s %s %s %s(涨幅:%s)\n' %(code, curr_price, curr_volume, df.name[0], curr_change))
                 print('%s %s满足特征' %(code, name))
+                list.append([code, name])
             else:
                 str = ''
                 if volume > curr_volume:
@@ -60,6 +62,7 @@ def valid_stock_2to3():
             print('%s无行情' % code)
     str = '\n共找到%s支满足特征的标的' %count
     print(str)
+    print("\n%s" % list)
     # ftoday.write(str)
     ftoday.close()
 
@@ -95,7 +98,7 @@ def valid_stock_3yang1tiao():
             df = ts.get_realtime_quotes(code)
 
             curr_price = float(df.price[0])
-            curr_change = (curr_price - close) / close * 100
+            curr_change = round((curr_price - close) / close * 100, 2)
             if curr_change >= constants.change_limit_3yang1tiao_lower_bound and curr_change <= constants.change_limit_3yang1tiao_upper_bound:
                 count+=1
                 ftoday.write('%s %s\n' % (code, df.name[0]))
@@ -194,9 +197,9 @@ def valid_stock_3yang():
                 f_err_log.write(
                     '%s停牌无数据,或者请查看sql语句是否正确\n' % value_code[i][0])  # 一般不用管，除非执行好多天的数据都为0时那可能输sql语句有问题了
 
-valid_stock_3yang()
-# valid_stock_2to3()
+valid_stock_2to3()
 print('\n\n\n')
+# valid_stock_3yang()
 # valid_stock_3yang1tiao()
 new_time = time.strftime('%Y-%m-%d')
 subject = '%s 2进3标的列表' % new_time
