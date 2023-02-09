@@ -16,6 +16,7 @@ log_dir = os.getcwd() + '\\log\\'
 data_dir = os.getcwd() + '\\data\\'
 ml_dir = os.getcwd()
 ml_data_dir = ml_dir + '\\data\\'
+stats_dir = os.getcwd() + '\\statistic\\'
 
 # strategy
 strategy_3yang = '3yang'

@@ -242,10 +242,29 @@ def get_pre_trade_day(now):
 			ret = str_yestoday
 	return ret, now
 
+# 获取n天前的交易日
+def get_trade_day_before_n_day(now, n):
+	ret = now
+	while n > 0:
+		ret, now = get_pre_trade_day(now)
+		n -= 1
+	return ret, now
+
 def is_trade_day(date):
 	pro = ts.pro_api()
 	df = pro.trade_cal(exchange='', start_date=date, end_date=date)
 	value = df.is_open[0]
 	return value == 1
+
+def get_target_day_count(start_date, end_date):
+	start_date = constants.get_date_str_for_datebase(start_date)
+	end_date = constants.get_date_str_for_datebase(end_date)
+	pro = constants.get_ts_pro()
+	df = pro.trade_cal(exchange='', start_date=start_date, end_date=end_date)
+	count = -1
+	for x in df.is_open:
+		if x == 1:
+			count += 1
+	return count
 
 #valid_stock('2018-3-1')

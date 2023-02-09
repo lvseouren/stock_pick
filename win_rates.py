@@ -95,11 +95,14 @@ def overall_winrate(dates):
 			if re.findall(dates, lastLines):
 				is_already_have_data = True
 		if is_already_have_data:
-			return
+			continue
 		fwinrate = open(filename, 'a')
 		str = '%s 上证指数:%s(%s); %s' % (dates, close, change, log)
 		fwinrate.write(str)
 		fwinrate.close()
+
+	for day in [5, 6, 7]:
+		cal_3yang_winrate_buy_before_n_day(day)
 
 # 遍历集合中的标的，取得其今天的最高股价以及昨天的收盘价，看涨幅是否大于1个点
 def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
@@ -172,11 +175,18 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 		return '策略[%s],%s' %(strategy, str)
 	return
 
-def cal_specific_day_3yang_winrate(date, filer=constants.stock_filter_all):
-	stockListFileName = constants.report_dir + date + constants.filename_3yang_list
+def cal_specific_day_3yang_winrate(target_date_str, filer=constants.stock_filter_all):
+	today = time.strftime('%Y-%m-%d')
+	d1 = datetime.date(*map(int, today.split('-')))
+	d2 = datetime.date(*map(int, target_date_str.split('-')))
+	diff = find_stock.get_target_day_count(d2, d1)
+
+	stockListFileName = constants.report_dir + target_date_str + constants.filename_3yang_list
 	fp = open(stockListFileName, "r")
 	lines = fp.readlines()
 	fp.close()
+
+	flog = open(constants.stats_dir + target_date_str + 'to%s(持仓%s天).txt' % (today, diff), 'w')
 
 	count = 0
 	change_sum = 0
@@ -213,21 +223,45 @@ def cal_specific_day_3yang_winrate(date, filer=constants.stock_filter_all):
 			if close < high and change > 1:
 				count += 1
 			str = '%s %s 涨幅：%s' % (code, df.name[0], change)
+			flog.write(str)
+			flog.write('\n')
 			print(str)
 		except:
 			print('%s无行情' % code)
 
-	totalCnt = len(lines)
-	winrate = round(count / totalCnt, 2)
+	# totalCnt = len(lines)
+	winrate = round(count / valid_count, 2)
 	average_change = round(change_sum / valid_count, 2)
-	average_change_open = round(change_sum_open / totalCnt, 2)
-	average_change_close = round(change_sum_close / totalCnt, 2)
-	str = '%s支标的,%s买入今卖,有%s支可以盈利，胜率为%s：,最高价格平均涨幅为:%s, 开盘价平均涨幅为：%s, 收盘价平均涨幅为：%s\n' % (
-	totalCnt, date, count, winrate, average_change, average_change_open, average_change_close)
+	average_change_open = round(change_sum_open / valid_count, 2)
+	average_change_close = round(change_sum_close / valid_count, 2)
+
+	str = '%s支标的,%s买入%s卖(持有%s天),有%s支可以盈利，胜率为%s：,最高价格平均涨幅为:%s, 开盘价平均涨幅为：%s, 收盘价平均涨幅为：%s\n' % (
+	valid_count, target_date_str, today, diff, count, winrate, average_change, average_change_open, average_change_close)
+
+	flog.write(str)
 	print(stockListFileName)
 	print(str)
+	flog.write('\n以下标的表现优秀:\n')
 	for x in list_goods:
 		print(x)
+		flog.write('%s\n'%x)
+	flog.close()
+
+	strategy = '3yang_hold_%s_days' % diff
+	filename = constants.get_winrate_filename_by_stategy(strategy)
+	is_already_have_data = False
+	if os.path.exists(filename):
+		fp = open(filename, "r")
+		lines = fp.readlines()
+		fp.close()
+		lastLines = lines[len(lines) - 1]
+		if re.findall(target_date_str, lastLines):
+			is_already_have_data = True
+	if is_already_have_data:
+		return
+	fwinrate = open(filename, 'a')
+	fwinrate.write(str)
+	fwinrate.close()
 
 def get_date_str_by_strategy(strategy, dates):
     now = datetime.date(*map(int, dates.split('-')))
@@ -250,6 +284,14 @@ def cal_strategy_winrate(strategy, dates, wirte_report=False):
     date_str = get_date_str_by_strategy(strategy, dates)
     filename = constants.report_dir + date_str + get_filename_by_strategy(strategy)
     return realtime_overall_winrate(strategy, wirte_report, filename)
+
+def cal_3yang_winrate_buy_before_n_day(n):
+	today = time.strftime('%Y-%m-%d')
+	now = datetime.date(*map(int, today.split('-')))
+	target_date_str, target_date = find_stock.get_trade_day_before_n_day(now, n)
+	target_date_str = constants.get_date_str_for_filename(target_date)
+	cal_specific_day_3yang_winrate(target_date_str, constants.stock_filter_chuangyeban)
+
 
 # realtime_overall_winrate()
 #rate('2018-03-16')
