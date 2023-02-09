@@ -126,6 +126,8 @@ def twoyang(dates):
 		code = value_code[i][0]
 		name = value_code[i][1]
 		if not constants.stock_is_st(name) and constants.stock_filter_all(code):
+			# if not constants.stock_filter_chuangyeban(code):
+			# 	continue
 			# 查询所有匹配到的股票，将今天与昨天的数据对比
 			try:
 				cursor.execute(
