@@ -212,7 +212,7 @@ def cal_specific_day_3yang_winrate(date, filer=constants.stock_filter_all):
 
 			if close < high and change > 1:
 				count += 1
-			str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
+			str = '%s %s 涨幅：%s' % (code, df.name[0], change)
 			print(str)
 		except:
 			print('%s无行情' % code)

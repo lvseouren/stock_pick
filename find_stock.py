@@ -217,6 +217,8 @@ def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change
 	ret = ret and close1 > opens1
 	# if is_change_limit:
 	# 	ret = ret and close1 > opens1 and close2 > opens2
+	if ret and is_change_limit:
+		ret = ret and p_change1 > 2
 
 	if is_change_limit and ret:
 		ret = p_change1 <= constants.get_change_limit()
