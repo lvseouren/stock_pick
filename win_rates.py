@@ -82,7 +82,7 @@ def rate(todays):
 def overall_winrate(dates):
 	df = ts.get_hist_data('sh', start=dates, end=dates)
 	close = df.close[0]
-	change = df.change[0]
+	change = df.p_change[0]
 	for strategy in constants.strategy_list:
 		log = cal_strategy_winrate(strategy, dates, True)
 		filename = constants.get_winrate_filename_by_stategy(strategy)
@@ -183,12 +183,14 @@ def cal_specific_day_3yang_winrate(date, filer=constants.stock_filter_all):
 	change_sum_open = 0
 	change_sum_close = 0
 	valid_count = 0
+	list_goods = []
 	for x in lines:
 		data = x.split(' ')
 		code = data[0]
 		if not filer(code):
 			continue
 		close = float(data[1])
+		name = data[3]
 		try:
 			# 获取单只股票当天的行情
 			df = ts.get_realtime_quotes(code)
@@ -205,6 +207,8 @@ def cal_specific_day_3yang_winrate(date, filer=constants.stock_filter_all):
 			close_today = float(df.price[0])
 			change_close = round((close_today - close) / close * 100, 2)
 			change_sum_close += change_close
+			if change > 7:
+				list_goods.append([code, name, change])
 
 			if close < high and change > 1:
 				count += 1
@@ -222,6 +226,8 @@ def cal_specific_day_3yang_winrate(date, filer=constants.stock_filter_all):
 	totalCnt, date, count, winrate, average_change, average_change_open, average_change_close)
 	print(stockListFileName)
 	print(str)
+	for x in list_goods:
+		print(x)
 
 def get_date_str_by_strategy(strategy, dates):
     now = datetime.date(*map(int, dates.split('-')))
