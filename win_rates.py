@@ -82,6 +82,7 @@ def rate(todays):
 def overall_winrate(dates):
 	df = ts.get_hist_data('sh', start=dates, end=dates)
 	close = df.close[0]
+	change = df.change[0]
 	for strategy in constants.strategy_list:
 		log = cal_strategy_winrate(strategy, dates, True)
 		filename = constants.get_winrate_filename_by_stategy(strategy)
@@ -96,7 +97,7 @@ def overall_winrate(dates):
 		if is_already_have_data:
 			return
 		fwinrate = open(filename, 'a')
-		str = '%s 上证指数:%s; %s' % (dates, close, log)
+		str = '%s 上证指数:%s(%s); %s' % (dates, close, change, log)
 		fwinrate.write(str)
 		fwinrate.close()
 
@@ -170,6 +171,57 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 	if wirte_report:
 		return '策略[%s],%s' %(strategy, str)
 	return
+
+def cal_specific_day_3yang_winrate(date, filer=constants.stock_filter_all):
+	stockListFileName = constants.report_dir + date + constants.filename_3yang_list
+	fp = open(stockListFileName, "r")
+	lines = fp.readlines()
+	fp.close()
+
+	count = 0
+	change_sum = 0
+	change_sum_open = 0
+	change_sum_close = 0
+	valid_count = 0
+	for x in lines:
+		data = x.split(' ')
+		code = data[0]
+		if not filer(code):
+			continue
+		close = float(data[1])
+		try:
+			# 获取单只股票当天的行情
+			df = ts.get_realtime_quotes(code)
+			high = float(df.high[0])
+			if high == 0:
+				continue
+
+			valid_count += 1
+			change = round((high - close) / close * 100, 2)
+			change_sum += change
+			open_today = float(df.open[0])
+			change_open = round((open_today - close) / close * 100, 2)
+			change_sum_open += change_open
+			close_today = float(df.price[0])
+			change_close = round((close_today - close) / close * 100, 2)
+			change_sum_close += change_close
+
+			if close < high and change > 1:
+				count += 1
+			str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
+			print(str)
+		except:
+			print('%s无行情' % code)
+
+	totalCnt = len(lines)
+	winrate = round(count / totalCnt, 2)
+	average_change = round(change_sum / valid_count, 2)
+	average_change_open = round(change_sum_open / totalCnt, 2)
+	average_change_close = round(change_sum_close / totalCnt, 2)
+	str = '%s支标的,%s买入今卖,有%s支可以盈利，胜率为%s：,最高价格平均涨幅为:%s, 开盘价平均涨幅为：%s, 收盘价平均涨幅为：%s\n' % (
+	totalCnt, date, count, winrate, average_change, average_change_open, average_change_close)
+	print(stockListFileName)
+	print(str)
 
 def get_date_str_by_strategy(strategy, dates):
     now = datetime.date(*map(int, dates.split('-')))

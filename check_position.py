@@ -33,9 +33,9 @@ def check_position(is_need_alert=False):
                 price = float(df.price[0])
                 pre_close = float(df.pre_close[0])
                 change = round((price - pre_close)/pre_close * 100, 2)
-                curr_volume = int(df.volume[0])
+                curr_volume = int(int(df.volume[0]) * 0.01)
                 add_volume = curr_volume - pre_volume if pre_volume > 0 else 0
-                str = '%s %s:%s(%s%%),volume:%s(+%s)' %(code, name, price, change, df.volume[0], add_volume)
+                str = '%s %s:%s(%s%%),volume:%s(+%s)' %(code, name, price, change, curr_volume, add_volume)
                 print(str)
                 pre_volume = curr_volume
 
@@ -46,7 +46,7 @@ def check_position(is_need_alert=False):
                     data = time_str.split(':')
                     time_str = '%s:%s' %(data[0], data[1])
                     symbol = '+' if add > 0 else ''
-                    str = '**************************************************%s 一分钟成交量为:%s(%s%s)\n' % (time_str, volome_minute, symbol, add)
+                    str = '%s 股价：%s(%s%%); 一分钟成交量为:%s(%s%s)手 总成交量为:%s手\n' % (time_str, price, change, volome_minute, symbol, add, curr_volume)
                     print(str)
                     pre_volume_minite = volome_minute
                     volome_minute = 0
