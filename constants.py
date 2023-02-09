@@ -51,12 +51,21 @@ turnover_threshold_lower_bound = 1
 change_limit_level_2 = 7
 change_limit_level_3 = 5
 change_limit_2to3 = 8
+change_limit_2yang = 6
 
 change_limit_3yang1tiao_lower_bound = -10
 change_limit_3yang1tiao_upper_bound = -2
 
 position_alert_change = 2
 check_position_interval = 5
+
+def get_change_limit():
+    ret = 20
+    if strict_level > 1:
+        ret = change_limit_level_2
+    if strict_level > 2:
+        ret = change_limit_level_3
+    return ret
 
 def try_init_ts():
     if not ts_inited:

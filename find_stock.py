@@ -165,6 +165,8 @@ def twoyang(dates):
 				if isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, True):
 					if not isSatisfy_twoyang(opens2, close2, opens3, close3, volume2, volume3, p_change2, p_change3):
 						if turnover1 <= constants.turnover_threshold_upper_bound and turnover1 >= constants.turnover_threshold_lower_bound:
+							if p_change1 > constants.change_limit_2yang:
+								continue
 							flist.write('%s %s %s %s\n' %(code, close1, volume1, name))
 							flog.write('%s票%s的开盘价是%s\n' % (code, today, opens1))
 							flog.write('%s票%s的收盘价是%s\n' % (code, today, close1))
@@ -183,7 +185,7 @@ def twoyang(dates):
 						# flist_3yang.write('%s %s %s \n' %(code, close1, volume1))
 						# count_3yang.append(code)
 				if isSatisfy_3yang(opens1, close1, volume1, p_change1, opens2, close2, volume2, p_change2, opens3, close3, volume3, p_change3):
-					flist_3yang.write('%s %s %s %s\n' %(code, close1, volume1, name))
+					flist_3yang.write('%s %s %s %s %s\n' %(code, close1, volume1, name, p_change1))
 					count_3yang.append(code)
 			except:
 				# 之前有次sql语句出错了，order by后面没加date，每次寻找都是0支，找了半个多小时才找出来是sql语句的问题
@@ -207,7 +209,6 @@ def find_3yang1tiao(dates):
 def isSatisfy_3yang(open1, close1, volume1, p_change1, open2, close2, volume2, p_change2, open3, close3, volume3, p_change3):
 	return isSatisfy_twoyang(open1, close1, open2, close2, volume1, volume2, p_change1, p_change2) and isSatisfy_twoyang(open2, close2, open3, close3, volume2, volume3, p_change2, p_change3, True)
 
-
 # 2是昨天，1是今天
 def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change1, p_change2, is_change_limit = False):
 	ret = close1 > close2 and p_change2 > 0 and volume1 > volume2
@@ -216,15 +217,9 @@ def isSatisfy_twoyang(opens1, close1, opens2, close2, volume1, volume2, p_change
 	ret = ret and close1 > opens1
 	# if is_change_limit:
 	# 	ret = ret and close1 > opens1 and close2 > opens2
-	if ret and is_change_limit:
-		ret = ret and p_change1 > 2
 
 	if is_change_limit and ret:
-		if constants.strict_level > 1:
-			ret = p_change1 <= constants.change_limit_level_2
-		if constants.strict_level > 2:
-			ret = p_change1 <= constants.change_limit_level_3
-
+		ret = p_change1 <= constants.get_change_limit()
 	return ret
 
 def get_pre_trade_day(now):
