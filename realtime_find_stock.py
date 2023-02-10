@@ -125,7 +125,7 @@ def valid_stock_3yang():
     flog = open(filename, 'w')
     errorFileName = dir_log + dates + '_error.log'
     f_err_log = open(errorFileName, 'w')
-    filename = constants.report_dir + dates + constants.filename_3yang_list
+    filename = constants.report_dir + dates + '_realtime' + constants.filename_3yang_list
     flist_3yang = open(filename, 'w')
     # 先将字符串格式的时间转换为时间格式才能计算昨天的日期
     now = datetime.date(*map(int, dates.split('-')))
@@ -182,7 +182,7 @@ def valid_stock_3yang():
 
                 curr_open = float(df.open[0])
                 curr_price = float(df.price[0])
-                curr_change = (curr_price - close2) / close2 * 100
+                curr_change = round((curr_price - close2) / close2 * 100, 2)
                 curr_volume = float(df.volume[0]) * 0.01
 
                 if curr_change > constants.change_limit_2to3:
@@ -193,7 +193,7 @@ def valid_stock_3yang():
 
                 if find_stock.isSatisfy_3yang(curr_open, curr_price, curr_volume, curr_change, opens2, close2, volume2, p_change2, opens3,
                                    close3, volume3, p_change3):
-                    flist_3yang.write('%s %s %s %s\n' % (code, curr_price, curr_volume, name))
+                    flist_3yang.write('%s %s(%s) %s %s\n' % (code, curr_price, curr_change, curr_volume, name))
 
             except:
                 # 之前有次sql语句出错了，order by后面没加date，每次寻找都是0支，找了半个多小时才找出来是sql语句的问题
