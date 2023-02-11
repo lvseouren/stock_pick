@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header, make_header
 import time
 
-def send_email(subject, att_file_names, att_suffixs):
+def send_email(subject, att_file_names, att_suffixs, is_send_bao=False):
     todays = time.strftime('%Y-%m-%d')
     # 设置自己邮件服务器和账号密码
     smtpserver = 'smtp.163.com'
@@ -35,6 +35,7 @@ def send_email(subject, att_file_names, att_suffixs):
     smtp.connect(smtpserver, 25)
     smtp.login(user, password)
     smtp.sendmail(sender, receiver, msg.as_string())
-    receiver2 = '942259616@qq.com'
-    # smtp.sendmail(sender, receiver2, msg.as_string())
+    if is_send_bao:
+        receiver2 = '942259616@qq.com'
+        smtp.sendmail(sender, receiver2, msg.as_string())
     smtp.quit()
