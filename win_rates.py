@@ -177,6 +177,8 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 
 def cal_specific_day_3yang_winrate(target_date_str, filer=constants.stock_filter_all):
 	today = time.strftime('%Y-%m-%d')
+	if not find_stock.is_trade_day(constants.change_date_str_format(today, '%Y-%m-%d', '%Y%m%d')):
+		return
 	d1 = datetime.date(*map(int, today.split('-')))
 	d2 = datetime.date(*map(int, target_date_str.split('-')))
 	diff = find_stock.get_target_day_count(d2, d1)

@@ -18,7 +18,7 @@ if __name__ == '__main__':
 		os.mkdir(constants.log_dir)
 
 	todays = time.strftime('%Y-%m-%d')
-	# todays = '2023-02-01'
+	# todays = '2023-02-10'
 	win_rates.rate(todays)
 	str = '今天的股票行情来啦(strict_level=%s)' % (constants.strict_level)
 	filename1 = test_report_dir + todays + constants.filename_2yang
