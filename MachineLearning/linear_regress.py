@@ -9,17 +9,24 @@ from sklearn import metrics
 import numpy as np
 import matplotlib.pyplot as plt
 
+def save_model(var_name_list, value_list):
+    filename = constants.ml_data_dir + constants.ml_model_file_name
+    fp = open(filename, 'w')
+    for i in range(0, len(value_list)):
+        fp.write('%s %s\n' %(var_name_list[i], value_list[i]))
+    fp.close()
+
 def mul_lr():
-    filename = constants.ml_data_dir + constants.filename_ml_data
+    filename = constants.ml_data_dir + constants.ml_excel_name
     pd_data=pd.read_excel(filename)
     print('pd_data.head(10)=\n{}'.format(pd_data.head(10)))
     mpl.rcParams['font.sans-serif'] = ['SimHei']  #配置显示中文，否则乱码
     mpl.rcParams['axes.unicode_minus']=False #用来正常显示负号，如果是plt画图，则将mlp换成plt
-    sns.pairplot(pd_data, x_vars=['中证500','沪深300','上证50','上证180'], y_vars='上证指数',kind="reg", size=5, aspect=0.7)
+    sns.pairplot(pd_data, x_vars=['x1','x2','x3','x4','x5','x6','x7','x8','x9'], y_vars='y',kind="reg", aspect=0.7)
     plt.show()#注意必须加上这一句，否则无法显示。
     # 剔除日期数据，一般没有这列可不执行，选取以下数据http://blog.csdn.net/chixujohnny/article/details/51095817
-    X = pd_data.loc[:, ('中证500', '沪深300', '上证50', '上证180')]
-    y = pd_data.loc[:, '上证指数']
+    X = pd_data.loc[:, ('x1','x2','x3','x4','x5','x6','x7','x8','x9')]
+    y = pd_data.loc[:, 'y']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=100)
     print('X_train.shape={}\n y_train.shape ={}\n X_test.shape={}\n,  y_test.shape={}'.format(X_train.shape,
                                                                                               y_train.shape,
@@ -33,9 +40,10 @@ def mul_lr():
     # 训练后模型权重（特征个数无变化）
     print(linreg.coef_)
 
-    feature_cols = ['中证500','沪深300','上证50','上证180','上证指数']
+    feature_cols = ['x1','x2','x3','x4','x5','x6','x7','x8','x9', 'y']
     B=list(zip(feature_cols,linreg.coef_))
     print(B)
+    save_model(feature_cols, linreg.coef_)
     #预测
     y_pred = linreg.predict(X_test)
     print (y_pred) #10个变量的预测结果
@@ -62,4 +70,4 @@ def mul_lr():
     plt.ylabel('value of sales')
     plt.show()
 
-mul_lr()
+# mul_lr()

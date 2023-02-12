@@ -3,7 +3,10 @@ import tushare as ts
 import os,time
 
 # ml
-
+ml_excel_name = 'stock_3yang.xlsx'
+ml_sheet_name_data = 'data'
+ml_sheet_name_predict = 'predict'
+ml_model_file_name = 'model_3yang.txt'
 
 # mysql
 mysql_user = 'root'
@@ -14,7 +17,7 @@ mysql_database_name = 'test2'
 report_dir = os.getcwd() + '\\report\\'
 log_dir = os.getcwd() + '\\log\\'
 data_dir = os.getcwd() + '\\data\\'
-ml_dir = os.getcwd()
+ml_dir = os.getcwd() + "\\MachineLearning"
 ml_data_dir = ml_dir + '\\data\\'
 stats_dir = os.getcwd() + '\\statistic\\'
 

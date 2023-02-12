@@ -129,11 +129,6 @@ def valid_stock_3yang():
     flist_3yang = open(filename, 'w')
     # 先将字符串格式的时间转换为时间格式才能计算昨天的日期
     now = datetime.date(*map(int, dates.split('-')))
-    # oneday = datetime.timedelta(days=1)
-    # yestody = str(now - oneday)
-    # # 将昨天日期转换为规定的字符串格式
-    # times = time.strptime(yestody, '%Y-%m-%d')
-    # str_yestoday = time.strftime('%Y%m%d', times)
     str_yestoday, yestoday = find_stock.get_pre_trade_day(now)
     str_theday_before_yestoday, theday_before_yestoday = find_stock.get_pre_trade_day(yestoday)
 

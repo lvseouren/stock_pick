@@ -15,7 +15,7 @@ def everystock():
 	cursor = conn.cursor()
 	#获取当前时间
 	new_time = time.strftime('%Y-%m-%d')
-	# new_time = '2023-01-16'
+	new_time = '2023-02-10'
 	# end_time = '2023-01-13'
 	a = 0
 

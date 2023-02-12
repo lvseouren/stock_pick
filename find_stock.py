@@ -242,6 +242,22 @@ def get_pre_trade_day(now):
 			ret = str_yestoday
 	return ret, now
 
+def get_next_trade_day(now):
+	is_find = False
+	ret = now
+	oneday = datetime.timedelta(days=1)
+	while not is_find:
+		yestodayDate = now + oneday
+		yestody = str(yestodayDate)
+		# 将昨天日期转换为规定的字符串格式
+		times = time.strptime(yestody, '%Y-%m-%d')
+		str_yestoday = time.strftime('%Y%m%d', times)
+		now = yestodayDate
+		if is_trade_day(str_yestoday):
+			is_find = True
+			ret = str_yestoday
+	return ret, now
+
 # 获取n天前的交易日
 def get_trade_day_before_n_day(now, n):
 	ret = now
