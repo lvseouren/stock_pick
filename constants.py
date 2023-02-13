@@ -60,7 +60,7 @@ change_limit_2yang = 6
 change_limit_3yang1tiao_lower_bound = -10
 change_limit_3yang1tiao_upper_bound = -2
 
-position_alert_change = 2
+position_alert_change = 5
 check_position_interval = 5
 
 def get_change_limit():

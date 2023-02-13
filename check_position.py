@@ -55,7 +55,7 @@ def check_position(is_need_alert=False):
                     data = time_str.split(':')
                     time_str = '%s:%s' %(data[0], data[1])
                     symbol = '+' if add > 0 else ''
-                    str = '%s 股价：%s(%s%%); 一分钟成交量为:%s(%s%s)手 总成交量为:%s手\n' % (time_str, price, change, volome_minute, symbol, add, curr_volume)
+                    str = '%s 股价：%s(%s%%); 一分钟成交量为:%s(%s%s)手 总成交量为:%s手\n' % (time_str, price, change, volome_minute[code], symbol, add, curr_volume)
                     print(str)
                     pre_volume_minite[code] = volome_minute[code]
                     volome_minute[code] = 0
