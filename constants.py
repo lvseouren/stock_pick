@@ -4,11 +4,15 @@ import os,time
 
 # ml
 ml_excel_name = 'stock_3yang.xlsx'
+ml_excel_name_3yang1tiao = 'stock_3yang1tiao.xlsx'
 ml_sheet_name_data = 'data'
 ml_sheet_name_predict = 'predict'
 ml_model_file_name = 'model_3yang.txt'
+ml_model_file_name_3yang1tiao = 'model_3yang1tiao.txt'
 ml_predict_report_filename = '_predict.txt'
 ml_predict_validate_report_filename = '_predict_validte.txt'
+ml_predict_report_filename_3yang1tiao = '_predict_3yang1tiao.txt'
+ml_predict_validate_report_filename_3yang1tiao = '_predict_validte_3yang1tiao.txt'
 
 # mysql
 mysql_user = 'root'
