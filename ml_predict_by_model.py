@@ -28,7 +28,6 @@ def prepare_data():
     curr_row = 2
 
     now = datetime.date(*map(int, date.split('-')))
-    today = constants.get_date_str_for_datebase(now)
     str_yestoday, yestoday = find_stock.get_pre_trade_day(now)
     str_theday_before_yestoday, theday_before_yestoday = find_stock.get_pre_trade_day(yestoday)
     conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
@@ -94,7 +93,6 @@ def predict():
     f = openpyxl.open(filename)
     sheet = f[constants.ml_sheet_name_predict]
 
-    colume_start = 2
     var_value_dict = {}
     list_result = []
     for row in range(2, sheet.max_row + 1):

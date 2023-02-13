@@ -7,6 +7,10 @@ import find_stock
 from MachineLearning import linear_regress
 
 def write_to_excel(sheet, date):
+    last_date = sheet.cell(sheet.max_row, 1).value
+    if last_date == date:
+        return False
+
     filename = constants.report_dir + date + constants.filename_3yang_list
     fp = open(filename, "r")
     lines = fp.readlines()
@@ -23,7 +27,6 @@ def write_to_excel(sheet, date):
     conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
                                    database=constants.mysql_database_name)
     cursor = conn.cursor()
-
     curr_row = sheet.max_row+1
     for x in lines:
         data = x.split(' ')

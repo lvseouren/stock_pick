@@ -1,5 +1,6 @@
 #总的运行文件，实现将统计报告发送邮件到自己的邮箱，将这个文件放到Jenkin上每个交易日下午3点之后运行就可以收到当天满足行情的股票了
 import constants
+import ml_update_model
 import win_rates
 import time
 import os
@@ -27,3 +28,4 @@ if __name__ == '__main__':
 	filename3 = constants.get_winrate_filename_by_stategy(constants.strategy_3yang)
 	email_sender.send_email(subject, [filename1, filename2, filename3], ['_2yang列表', '_3yang列表', '胜率信息'], True)
 	# wechat_sender.send_msg('狄拉克海捕鱼人', 'cfmm已发送邮箱，请查收')
+	ml_update_model.update_model()
