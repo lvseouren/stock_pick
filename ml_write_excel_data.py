@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 import datetime
-import tushare as ts
 import mysql
 import openpyxl
 import constants
@@ -48,7 +47,9 @@ def write_to_excel(sheet, date):
         turnover2 = float(value[1][7])
         turnover3 = float(value[2][7])
         close3 = float(value[2][2])
-        high = float(value[3][3])
+        high = 0
+        if len(value) > 3:
+            high = float(value[3][3])
         high_change = round((high - close3)/close3 * 100, 2)
         print('%s %s %s最高涨幅为:%s' %(code, name, str_next_day, high_change))
 
@@ -71,26 +72,29 @@ def write_to_excel(sheet, date):
 
     return
 
-def prepare_data():
+def prepare_data(starttime, endtime):
     filename = constants.ml_data_dir + constants.ml_excel_name
     print(filename)
     f = openpyxl.open(filename)
     sheet = f[constants.ml_sheet_name_data]
-    # date = '2023-02-07'
-    starttime = '2023-02-02'
-    endtime = '2023-02-06'
-    df = ts.get_hist_data('sh', starttime, endtime)
+    # starttime = '20230209'
+    # endtime = '20230210'
+    # df = ts.get_hist_data('sh', starttime, endtime)
+    df = constants.get_ts_pro().trade_cal(exchange='', start_date=starttime, end_date=endtime)
     try:
-        for i in range(0, len(df)):
+        for i in range(0, len(df.is_open)):
+            if df.is_open[i] == 0:
+                continue
             # 获取股票日期，并转格式（这里为什么要转格式，是因为之前我2018-03-15这样的格式写入数据库的时候，通过通配符%之后他居然给我把-符号当做减号给算出来了查看数据库日期就是2000百思不得其解想了很久最后决定转换格式）
-            date = df.index[i]
+            date = df.cal_date[i]
+            date = constants.change_date_str_format(date, '%Y%m%d', '%Y-%m-%d')
             write_to_excel(sheet, date)
-            f.save(filename)
     except:
         print('wtf')
+    f.save(filename)
 
 # prepare_data()
-linear_regress.mul_lr()
+# linear_regress.mul_lr()
 
 
 

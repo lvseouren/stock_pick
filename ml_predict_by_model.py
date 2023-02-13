@@ -8,6 +8,9 @@ import tushare as ts
 import constants
 import find_stock
 
+def take_third(elem):
+    return elem[2]
+
 def prepare_data():
     find_stock.valid_stock_2to3()
 
@@ -93,6 +96,7 @@ def predict():
 
     colume_start = 2
     var_value_dict = {}
+    list_result = []
     for row in range(2, sheet.max_row + 1):
         code = sheet.cell(row, 2).value
         name = sheet.cell(row, 3).value
@@ -111,8 +115,12 @@ def predict():
             y += var_value_dict[key] * model_dict[key]
         y = round(y, 2)
         print('%s %s 预测下一交易日最大涨幅为:%s%%' %(code, name, y))
+        list_result.append([code, name, y])
         sheet.cell(row, 13).value = y
     f.save(filename)
+
+    list_result.sort(key=take_third, reverse=True)
+    print("%s" %list_result)
 
 prepare_data()
 predict()
