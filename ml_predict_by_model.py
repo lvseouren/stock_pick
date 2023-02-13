@@ -120,8 +120,8 @@ def predict():
     list_result.sort(key=take_third, reverse=True)
     # print("%s" %list_result)
     print('\n\n')
-    today = time.strftime('%Y-%m-%d')
-    filename = constants.ml_report_dir + today + constants.ml_predict_report_file_name
+    today = sheet.cell(2, 1).value
+    filename = constants.ml_report_dir + today + constants.ml_predict_report_filename
     fp = open(filename, 'w')
     for x in list_result:
         str = '%s %s 预测涨幅：%s%%\n' %(x[0], x[1], x[2])
@@ -129,5 +129,5 @@ def predict():
         fp.write(str)
     fp.close()
 
-prepare_data()
+# prepare_data()
 predict()

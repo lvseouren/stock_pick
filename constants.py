@@ -7,7 +7,8 @@ ml_excel_name = 'stock_3yang.xlsx'
 ml_sheet_name_data = 'data'
 ml_sheet_name_predict = 'predict'
 ml_model_file_name = 'model_3yang.txt'
-ml_predict_report_file_name = '_predict.txt'
+ml_predict_report_filename = '_predict.txt'
+ml_predict_validate_report_filename = '_predict_validte.txt'
 
 # mysql
 mysql_user = 'root'

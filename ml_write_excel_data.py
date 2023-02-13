@@ -73,9 +73,10 @@ def write_to_excel(sheet, date):
 
         curr_row += 1
 
-    return
+    return True
 
 def prepare_data(starttime, endtime):
+    is_dirty = False
     filename = constants.ml_data_dir + constants.ml_excel_name
     print(filename)
     f = openpyxl.open(filename)
@@ -91,10 +92,11 @@ def prepare_data(starttime, endtime):
             # 获取股票日期，并转格式（这里为什么要转格式，是因为之前我2018-03-15这样的格式写入数据库的时候，通过通配符%之后他居然给我把-符号当做减号给算出来了查看数据库日期就是2000百思不得其解想了很久最后决定转换格式）
             date = df.cal_date[i]
             date = constants.change_date_str_format(date, '%Y%m%d', '%Y-%m-%d')
-            write_to_excel(sheet, date)
+            is_dirty = True if write_to_excel(sheet, date) or is_dirty else False
     except:
         print('wtf')
     f.save(filename)
+    return is_dirty
 
 # prepare_data()
 # linear_regress.mul_lr()
