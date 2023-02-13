@@ -59,6 +59,8 @@ def prepare_data_3yang1tiao():
         curr_price = float(df.price[0])
         pre_close = float(df.pre_close[0])
         change4 = round((curr_price - pre_close) / pre_close * 100, 2)
+        if change4 > constants.change_limit_3yang1tiao_upper_bound:
+            continue
         volume4 = float(df.volume[0]) / 100
         turnover4 = round(turnover3 * volume4 / volume3, 2)
 
@@ -258,5 +260,5 @@ def predict():
 # prepare_data()
 # predict()
 
-# prepare_data_3yang1tiao()
+prepare_data_3yang1tiao()
 predict_3yang1tiao()

@@ -138,6 +138,8 @@ def write_to_excel_3yang1tiao(sheet, date):
         change2 = float(value[1][6])
         change3 = float(value[2][6])
         change4 = float(value[3][6])
+        if change4 > constants.change_limit_3yang1tiao_upper_bound:
+            continue
         volume1 = float(value[0][5])
         volume2 = float(value[1][5])
         volume3 = float(value[2][5])
