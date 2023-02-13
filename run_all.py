@@ -18,12 +18,12 @@ if __name__ == '__main__':
 	if not os.path.exists(constants.log_dir):
 		os.mkdir(constants.log_dir)
 
-	todays = time.strftime('%Y-%m-%d')
-	# todays = '2023-02-10'
-	win_rates.rate(todays)
+	today = time.strftime('%Y-%m-%d')
+	# today = '2023-02-10'
+	win_rates.rate(today)
 	str = '今天的股票行情来啦(strict_level=%s)' % (constants.strict_level)
-	filename1 = test_report_dir + todays + constants.filename_2yang
-	filename2 = test_report_dir + todays + constants.filename_3yang
+	filename1 = test_report_dir + today + constants.filename_2yang
+	filename2 = test_report_dir + today + constants.filename_3yang
 	subject = str
 	filename3 = constants.get_winrate_filename_by_stategy(constants.strategy_3yang)
 	email_sender.send_email(subject, [filename1, filename2, filename3], ['_2yang列表', '_3yang列表', '胜率信息'], True)

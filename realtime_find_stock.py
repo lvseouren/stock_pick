@@ -62,22 +62,22 @@ def valid_stock_3yang1tiao():
     ftoday.close()
 
 def valid_stock_3yang():
-    dates = time.strftime('%Y-%m-%d')
+    date = time.strftime('%Y-%m-%d')
     dir_log = constants.log_dir
-    filename = dir_log + dates + '.log'
+    filename = dir_log + date + '.log'
     flog = open(filename, 'w')
-    errorFileName = dir_log + dates + '_error.log'
+    errorFileName = dir_log + date + '_error.log'
     f_err_log = open(errorFileName, 'w')
-    filename = constants.report_dir + dates + '_realtime' + constants.filename_3yang_list
+    filename = constants.report_dir + date + '_realtime' + constants.filename_3yang_list
     flist_3yang = open(filename, 'w')
     # 先将字符串格式的时间转换为时间格式才能计算昨天的日期
-    now = datetime.date(*map(int, dates.split('-')))
+    now = datetime.date(*map(int, date.split('-')))
     str_yestoday, yestoday = find_stock.get_pre_trade_day(now)
     str_theday_before_yestoday, theday_before_yestoday = find_stock.get_pre_trade_day(yestoday)
 
     flog.write('执行的时间前一天是%s\n' % str_yestoday)
     # 将想要查找的日期转换为规定的字符串格式
-    str_today = time.strptime(dates, '%Y-%m-%d')
+    str_today = time.strptime(date, '%Y-%m-%d')
     today = time.strftime('%Y%m%d', str_today)
     flog.write('执行的时间是%s\n' % today)
     # 连接数据库

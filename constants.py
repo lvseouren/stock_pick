@@ -7,6 +7,7 @@ ml_excel_name = 'stock_3yang.xlsx'
 ml_sheet_name_data = 'data'
 ml_sheet_name_predict = 'predict'
 ml_model_file_name = 'model_3yang.txt'
+ml_predict_report_file_name = '_predict.txt'
 
 # mysql
 mysql_user = 'root'
@@ -19,6 +20,7 @@ log_dir = os.getcwd() + '\\log\\'
 data_dir = os.getcwd() + '\\data\\'
 ml_dir = os.getcwd() + "\\MachineLearning"
 ml_data_dir = ml_dir + '\\data\\'
+ml_report_dir = ml_dir + '\\report\\'
 stats_dir = os.getcwd() + '\\statistic\\'
 
 # strategy
@@ -60,7 +62,7 @@ change_limit_2yang = 6
 change_limit_3yang1tiao_lower_bound = -10
 change_limit_3yang1tiao_upper_bound = -2
 
-position_alert_change = 5
+position_alert_change = 4
 check_position_interval = 5
 
 def get_change_limit():
@@ -108,6 +110,12 @@ def get_date_str_for_filename(date):
     # 将昨天日期转换为规定的字符串格式
     date_str = date.strftime('%Y-%m-%d')
     return date_str
+
+def change_date_str_from_database_to_filename(date_str):
+    return change_date_str_format(date_str, '%Y%m%d', '%Y-%m-%d')
+
+def change_date_str_form_filename_to_database(date_str):
+    return change_date_str_format(date_str, '%Y-%m-%d', '%Y%m%d')
 
 def change_date_str_format(date_str, from_format, target_format):
     date = time.strptime(date_str, from_format)
