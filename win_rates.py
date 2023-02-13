@@ -12,6 +12,7 @@ import find_stock
 def rate(todays):
 	print(todays)
 	overall_winrate(todays)
+	time.sleep(3)
 	count,a,count2 = find_stock.valid_stock(todays)
 	# a = 1
 	# count = ['300322']
