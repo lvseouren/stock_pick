@@ -174,7 +174,7 @@ def predict_3yang1tiao_of_sheet(sheetname, modelname):
     # print("%s" %list_result)
     print('\n\n')
     today = sheet.cell(2, 1).value
-    filename = constants.ml_report_dir + today + sheetname + constants.ml_predict_report_filename_3yang1tiao
+    filename = constants.ml_report_dir + today + '_' + sheetname + '_' + constants.ml_predict_report_filename_3yang1tiao
     fp = open(filename, 'w')
     for x in list_result:
         str = '%s %s 今日涨幅：%s%% 预测明日涨幅：%s%%' % (x[0], x[1], x[3], x[2])
