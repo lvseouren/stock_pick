@@ -74,4 +74,4 @@ def check_position(is_need_alert=False):
         time.sleep(constants.check_position_interval)
         timer_minute += constants.check_position_interval
 
-check_position()
+check_position(True)

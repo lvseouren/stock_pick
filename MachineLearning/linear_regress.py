@@ -76,11 +76,11 @@ def mul_lr_3yang1tiao():
     print('pd_data.head(10)=\n{}'.format(pd_data.head(10)))
     mpl.rcParams['font.sans-serif'] = ['SimHei']  # 配置显示中文，否则乱码
     mpl.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号，如果是plt画图，则将mlp换成plt
-    sns.pairplot(pd_data, x_vars=['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'x10', 'x11', 'x12'], y_vars='y', kind="reg",
+    sns.pairplot(pd_data, x_vars=['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'x10', 'x11', 'x12', 'x13', 'x14', 'x15', 'x16', 'x17', 'x18', 'x19', 'x20', 'x21'], y_vars='y', kind="reg",
                  aspect=0.7)
     plt.show()  # 注意必须加上这一句，否则无法显示。
     # 剔除日期数据，一般没有这列可不执行，选取以下数据http://blog.csdn.net/chixujohnny/article/details/51095817
-    X = pd_data.loc[:, ('x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'x10', 'x11', 'x12')]
+    X = pd_data.loc[:, ('x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'x10', 'x11', 'x12', 'x13', 'x14', 'x15', 'x16', 'x17', 'x18', 'x19', 'x20', 'x21')]
     y = pd_data.loc[:, 'y']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=100)
     print('X_train.shape={}\n y_train.shape ={}\n X_test.shape={}\n,  y_test.shape={}'.format(X_train.shape,
@@ -95,7 +95,7 @@ def mul_lr_3yang1tiao():
     # 训练后模型权重（特征个数无变化）
     print(linreg.coef_)
 
-    feature_cols = ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'x10', 'x11', 'x12', 'y']
+    feature_cols = ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'x10', 'x11', 'x12', 'x13', 'x14', 'x15', 'x16', 'x17', 'x18', 'x19', 'x20', 'x21', 'y']
     B = list(zip(feature_cols, linreg.coef_))
     print(B)
     save_model(constants.ml_model_file_name_3yang1tiao, feature_cols, linreg.coef_)

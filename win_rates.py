@@ -112,7 +112,7 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 	now = datetime.date(*map(int, new_time.split('-')))
 	yestodayStr, yestoday = find_stock.get_pre_trade_day(now)
 
-	filename = constants.report_dir + new_time + '_实时胜率.txt'
+	filename = constants.report_dir + new_time + '_' + strategy + '_实时胜率.txt'
 	ftoday = open(filename, 'w')
 
 	# yestodayStr2 = '2023-01-31'
@@ -153,12 +153,15 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 			close_today = float(df.price[0])
 			change_close = round((close_today - close)/close * 100, 2)
 			change_sum_close += change_close
+			str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
+			# if strategy == constants.strategy_3yang:
+			print(str)
 			if close < high and change > 1:
 				count += 1
-				str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
+
 				ftoday.write(str)
-				if strategy == constants.strategy_3yang:
-					print(str)
+				# if strategy == constants.strategy_3yang:
+				# 	print(str)
 		except:
 			print('%s无行情' % code)
 

@@ -33,6 +33,8 @@ def prepare_data_3yang1tiao():
     conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
                                    database=constants.mysql_database_name)
     cursor = conn.cursor()
+    df = ts.get_hist_data('sh', start=date, end=date)
+    change_index_sz = df.p_change[0]
 
     for x in lines:
         data = x.split(' ')
@@ -51,16 +53,39 @@ def prepare_data_3yang1tiao():
         volume1 = float(value[0][5])
         volume2 = float(value[1][5])
         volume3 = float(value[2][5])
+        high1 = float(value[0][3])
+        high2 = float(value[1][3])
+        high3 = float(value[2][3])
+        low1 = float(value[0][4])
+        low2 = float(value[1][4])
+        low3 = float(value[2][4])
         turnover1 = float(value[0][7])
         turnover2 = float(value[1][7])
         turnover3 = float(value[2][7])
 
+        close1 = float(value[0][2])
+        close2 = float(value[1][2])
+        close3 = float(value[2][2])
+        close0 = close1/(1+change1*0.01)
+        high_change1 = round(((high1 - close0) / close0 * 100), 2)
+        high_change2 = round((high2 - close1) / close1 * 100, 2)
+        high_change3 = round((high3 - close2) / close2 * 100, 2)
+
+        low_change1 = round((low1 - close0) / close0 * 100, 2)
+        low_change2 = round((low2 - close1) / close1 * 100, 2)
+        low_change3 = round((low3 - close2) / close2 * 100, 2)
+
         df = ts.get_realtime_quotes(code)
         curr_price = float(df.price[0])
         pre_close = float(df.pre_close[0])
+        curr_high = float(df.high[0])
+        curr_low = float(df.low[0])
         change4 = round((curr_price - pre_close) / pre_close * 100, 2)
         if change4 > constants.change_limit_3yang1tiao_upper_bound:
             continue
+
+        high_change4 = round((curr_high - pre_close) / pre_close * 100, 2)
+        low_change4 = round((curr_low - pre_close) / pre_close * 100, 2)
         volume4 = float(df.volume[0]) / 100
         turnover4 = round(turnover3 * volume4 / volume3, 2)
 
@@ -80,6 +105,15 @@ def prepare_data_3yang1tiao():
         sheet.cell(curr_row, 13).value = turnover2
         sheet.cell(curr_row, 14).value = turnover3
         sheet.cell(curr_row, 15).value = turnover4
+        sheet.cell(curr_row, 16).value = high_change1
+        sheet.cell(curr_row, 17).value = high_change2
+        sheet.cell(curr_row, 18).value = high_change3
+        sheet.cell(curr_row, 19).value = high_change4
+        sheet.cell(curr_row, 20).value = low_change1
+        sheet.cell(curr_row, 21).value = low_change2
+        sheet.cell(curr_row, 22).value = low_change3
+        sheet.cell(curr_row, 23).value = low_change4
+        sheet.cell(curr_row, 24).value = change_index_sz
         curr_row += 1
     f.save(filename)
 
@@ -106,26 +140,18 @@ def predict_3yang1tiao():
     for row in range(2, sheet.max_row + 1):
         code = sheet.cell(row, 2).value
         name = sheet.cell(row, 3).value
-        var_value_dict['x1'] = sheet.cell(row, 4).value
-        var_value_dict['x2'] = sheet.cell(row, 5).value
-        var_value_dict['x3'] = sheet.cell(row, 6).value
-        var_value_dict['x4'] = sheet.cell(row, 7).value
-        var_value_dict['x5'] = sheet.cell(row, 8).value
-        var_value_dict['x6'] = sheet.cell(row, 9).value
-        var_value_dict['x7'] = sheet.cell(row, 10).value
-        var_value_dict['x8'] = sheet.cell(row, 11).value
-        var_value_dict['x9'] = sheet.cell(row, 12).value
-        var_value_dict['x10'] = sheet.cell(row, 13).value
-        var_value_dict['x11'] = sheet.cell(row, 14).value
-        var_value_dict['x12'] = sheet.cell(row, 15).value
+
+        for i in range(1, 22):
+            key = 'x%d' %i
+            var_value_dict[key] = sheet.cell(row, 3+i).value
 
         y = 0
         for key in var_value_dict:
             y += var_value_dict[key] * model_dict[key]
         y = round(y, 2)
-        print('%s %s 预测下一交易日最大涨幅为:%s%%' % (code, name, y))
-        list_result.append([code, name, y])
-        sheet.cell(row, 16).value = y
+        # print('%s %s 预测下一交易日最大涨幅为:%s%%' % (code, name, y))
+        list_result.append([code, name, y, var_value_dict['x4']])
+        sheet.cell(row, 25).value = y
     f.save(filename)
 
     list_result.sort(key=take_third, reverse=True)
@@ -135,8 +161,9 @@ def predict_3yang1tiao():
     filename = constants.ml_report_dir + today + constants.ml_predict_report_filename_3yang1tiao
     fp = open(filename, 'w')
     for x in list_result:
-        str = '%s %s 预测涨幅：%s%%\n' % (x[0], x[1], x[2])
+        str = '%s %s 今日涨幅：%s%% 预测明日涨幅：%s%%' % (x[0], x[1], x[3], x[2])
         print(str)
+        str+='\n'
         fp.write(str)
     fp.close()
 def prepare_data():
@@ -240,7 +267,7 @@ def predict():
         for key in var_value_dict:
             y += var_value_dict[key] * model_dict[key]
         y = round(y, 2)
-        print('%s %s 预测下一交易日最大涨幅为:%s%%' %(code, name, y))
+        # print('%s %s 预测下一交易日最大涨幅为:%s%%' %(code, name, y))
         list_result.append([code, name, y])
         sheet.cell(row, 13).value = y
     f.save(filename)
@@ -252,13 +279,14 @@ def predict():
     filename = constants.ml_report_dir + today + constants.ml_predict_report_filename
     fp = open(filename, 'w')
     for x in list_result:
-        str = '%s %s 预测涨幅：%s%%\n' %(x[0], x[1], x[2])
+        str = '%s %s 预测涨幅：%s%%' %(x[0], x[1], x[2])
         print(str)
+        str+='\n'
         fp.write(str)
     fp.close()
 
 # prepare_data()
 # predict()
-
+print('-----------------------------------\n\n')
 prepare_data_3yang1tiao()
 predict_3yang1tiao()
