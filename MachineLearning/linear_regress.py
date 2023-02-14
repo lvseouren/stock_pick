@@ -71,8 +71,12 @@ def mul_lr_3yang():
     plt.show()
 
 def mul_lr_3yang1tiao():
+    mul_lr_3yang1tiao_of_sheet(constants.ml_sheetname_data, constants.ml_model_file_name_3yang1tiao)
+    mul_lr_3yang1tiao_of_sheet(constants.ml_sheetname_data_hushen, constants.ml_model_file_name_3yang1tiao_hushen)
+
+def mul_lr_3yang1tiao_of_sheet(sheetname, savefile):
     filename = constants.ml_data_dir + constants.ml_excel_name_3yang1tiao
-    pd_data = pd.read_excel(filename)
+    pd_data = pd.read_excel(filename, sheet_name=sheetname)
     print('pd_data.head(10)=\n{}'.format(pd_data.head(10)))
     mpl.rcParams['font.sans-serif'] = ['SimHei']  # 配置显示中文，否则乱码
     mpl.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号，如果是plt画图，则将mlp换成plt
@@ -98,7 +102,7 @@ def mul_lr_3yang1tiao():
     feature_cols = ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'x10', 'x11', 'x12', 'x13', 'x14', 'x15', 'x16', 'x17', 'x18', 'x19', 'x20', 'x21', 'y']
     B = list(zip(feature_cols, linreg.coef_))
     print(B)
-    save_model(constants.ml_model_file_name_3yang1tiao, feature_cols, linreg.coef_)
+    save_model(savefile, feature_cols, linreg.coef_)
     # 预测
     y_pred = linreg.predict(X_test)
     print(y_pred)  # 10个变量的预测结果

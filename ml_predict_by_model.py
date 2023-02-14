@@ -12,6 +12,16 @@ def take_third(elem):
     return elem[2]
 
 def prepare_data_3yang1tiao():
+    prepare_data_3yang1tiao_chuangyeban()
+    prepare_data_3yang1tiao_hushen()
+
+def prepare_data_3yang1tiao_chuangyeban():
+    prepare_data_3yang1tiao_with_filter(constants.stock_filter_chuangyeban, constants.ml_sheet_name_predict)
+
+def prepare_data_3yang1tiao_hushen():
+    prepare_data_3yang1tiao_with_filter(constants.stock_filter_hushen, constants.ml_sheet_name_predict_hushen)
+
+def prepare_data_3yang1tiao_with_filter(filter, sheetname):
     date = time.strftime('%Y-%m-%d')
     now = datetime.date(*map(int, date.split('-')))
     str_yestoday, yestoday = find_stock.get_pre_trade_day(now)
@@ -25,7 +35,7 @@ def prepare_data_3yang1tiao():
     filename = constants.ml_data_dir + constants.ml_excel_name_3yang1tiao
     print(filename)
     f = openpyxl.open(filename)
-    sheet = f[constants.ml_sheet_name_predict]
+    sheet = f[sheetname]
     curr_row = 2
 
     str_yestoday_yestoday, yestoday_yestoday = find_stock.get_pre_trade_day(yestoday)
@@ -39,6 +49,8 @@ def prepare_data_3yang1tiao():
     for x in lines:
         data = x.split(' ')
         code = data[0]
+        if not filter(code):
+            continue
         name = data[3]
         # 需要取得date-2,date-1,date,date+1的数据
         # 1,2,3分别对应3yang标的day1,2,3的数据
@@ -118,7 +130,11 @@ def prepare_data_3yang1tiao():
     f.save(filename)
 
 def predict_3yang1tiao():
-    filename = constants.ml_data_dir + constants.ml_model_file_name_3yang1tiao
+    predict_3yang1tiao_of_sheet(constants.ml_sheet_name_predict, constants.ml_model_file_name_3yang1tiao)
+    predict_3yang1tiao_of_sheet(constants.ml_sheet_name_predict_hushen, constants.ml_model_file_name_3yang1tiao_hushen)
+
+def predict_3yang1tiao_of_sheet(sheetname, modelname):
+    filename = constants.ml_data_dir + modelname
     fmodel = open(filename, 'r')
     lines = fmodel.readlines()
     fmodel.close()
@@ -133,7 +149,7 @@ def predict_3yang1tiao():
     filename = constants.ml_data_dir + constants.ml_excel_name_3yang1tiao
     print(filename)
     f = openpyxl.open(filename)
-    sheet = f[constants.ml_sheet_name_predict]
+    sheet = f[sheetname]
 
     var_value_dict = {}
     list_result = []
@@ -158,7 +174,7 @@ def predict_3yang1tiao():
     # print("%s" %list_result)
     print('\n\n')
     today = sheet.cell(2, 1).value
-    filename = constants.ml_report_dir + today + constants.ml_predict_report_filename_3yang1tiao
+    filename = constants.ml_report_dir + today + sheetname + constants.ml_predict_report_filename_3yang1tiao
     fp = open(filename, 'w')
     for x in list_result:
         str = '%s %s 今日涨幅：%s%% 预测明日涨幅：%s%%' % (x[0], x[1], x[3], x[2])
@@ -166,6 +182,7 @@ def predict_3yang1tiao():
         str+='\n'
         fp.write(str)
     fp.close()
+
 def prepare_data():
     find_stock.valid_stock_2to3()
 

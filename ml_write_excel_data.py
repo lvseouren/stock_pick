@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 import datetime
+import time
+
 import mysql
 import openpyxl
 import constants
@@ -81,7 +83,7 @@ def prepare_data(starttime, endtime):
     filename = constants.ml_data_dir + constants.ml_excel_name
     print(filename)
     f = openpyxl.open(filename)
-    sheet = f[constants.ml_sheet_name_data]
+    sheet = f[constants.ml_sheetname_data]
     # starttime = '20230209'
     # endtime = '20230210'
     # df = ts.get_hist_data('sh', starttime, endtime)
@@ -99,7 +101,7 @@ def prepare_data(starttime, endtime):
     f.save(filename)
     return is_dirty
 
-def write_to_excel_3yang1tiao(sheet, date):
+def write_to_excel_3yang1tiao(sheet, date, filter):
     last_date = sheet.cell(sheet.max_row, 1).value
     if last_date == date:
         return False
@@ -130,7 +132,7 @@ def write_to_excel_3yang1tiao(sheet, date):
     for x in lines:
         data = x.split(' ')
         code = data[0]
-        if not constants.stock_filter_chuangyeban(code):
+        if not filter(code):
             continue
         name = data[3]
 
@@ -183,7 +185,8 @@ def write_to_excel_3yang1tiao(sheet, date):
             high = float(value[4][3])
         high_change = round((high - close4) / close4 * 100, 2)
         print('%s %s %s最高涨幅为:%s' % (code, name, str_next_day, high_change))
-
+        if code == '600970':
+            print('gotcha')
         sheet.cell(curr_row, 1).value = date
         sheet.cell(curr_row, 2).value = code
         sheet.cell(curr_row, 3).value = name
@@ -215,20 +218,27 @@ def write_to_excel_3yang1tiao(sheet, date):
     return True
 
 def prepare_data_3yang1tiao(starttime, endtime):
+    prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data,
+                                        constants.stock_filter_chuangyeban)
+    time.sleep(3)
+    prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data_hushen,
+                                        constants.stock_filter_hushen)
+
+def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
     is_dirty = False
     filename = constants.ml_data_dir + constants.ml_excel_name_3yang1tiao
     print(filename)
     f = openpyxl.open(filename)
-    sheet = f[constants.ml_sheet_name_data]
+    sheet = f[sheetname]
     df = constants.get_ts_pro().trade_cal(exchange='', start_date=starttime, end_date=endtime)
     try:
         for i in range(0, len(df.is_open)):
             if df.is_open[i] == 0:
                 continue
-            # 获取股票日期，并转格式（这里为什么要转格式，是因为之前我2018-03-15这样的格式写入数据库的时候，通过通配符%之后他居然给我把-符号当做减号给算出来了查看数据库日期就是2000百思不得其解想了很久最后决定转换格式）
             date = df.cal_date[i]
             date = constants.change_date_str_format(date, '%Y%m%d', '%Y-%m-%d')
-            is_dirty = True if write_to_excel_3yang1tiao(sheet, date) or is_dirty else False
+            is_dirty = True if write_to_excel_3yang1tiao(sheet, date, filter) or is_dirty else False
+            time.sleep(1)
     except:
         print('wtf')
     f.save(filename)
@@ -236,8 +246,8 @@ def prepare_data_3yang1tiao(starttime, endtime):
 
 # prepare_data()
 # linear_regress.mul_lr_3yang()
-prepare_data_3yang1tiao('20230201', '20230210')
-linear_regress.mul_lr_3yang1tiao()
+# prepare_data_3yang1tiao('20230201', '20230210')
+# linear_regress.mul_lr_3yang1tiao()
 
 
 
