@@ -20,12 +20,13 @@ if __name__ == '__main__':
 
 	today = time.strftime('%Y-%m-%d')
 	# today = '2023-02-10'
-	# win_rates.rate(today)
+	win_rates.rate(today)
 	str = '今天的股票行情来啦(strict_level=%s)' % (constants.strict_level)
 	filename1 = test_report_dir + today + constants.filename_2yang
 	filename2 = test_report_dir + today + constants.filename_3yang
+	filename4 = constants.ml_report_dir + today + '_' + constants.ml_sheet_name_predict + '_' + constants.ml_predict_report_filename_3yang1tiao
 	subject = str
 	filename3 = constants.get_winrate_filename_by_stategy(constants.strategy_3yang)
-	email_sender.send_email(subject, [filename1, filename2, filename3], ['_2yang列表', '_3yang列表', '胜率信息'], True)
+	email_sender.send_email(subject, [filename1, filename2, filename3, filename4], ['_2yang列表', '_3yang列表', '胜率信息', '预测信息'], True)
 	# wechat_sender.send_msg('狄拉克海捕鱼人', 'cfmm已发送邮箱，请查收')
 	ml_update_model.update_model()

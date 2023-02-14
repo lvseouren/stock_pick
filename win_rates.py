@@ -101,9 +101,11 @@ def overall_winrate(dates):
 		str = '%s 上证指数:%s(%s); %s' % (dates, close, change, log)
 		fwinrate.write(str)
 		fwinrate.close()
+		time.sleep(1)
 
 	for day in [5, 6, 7]:
 		cal_3yang_winrate_buy_before_n_day(day)
+		time.sleep(1)
 
 # 遍历集合中的标的，取得其今天的最高股价以及昨天的收盘价，看涨幅是否大于1个点
 def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):

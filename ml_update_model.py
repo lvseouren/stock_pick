@@ -12,8 +12,10 @@ def update_model():
     is_dirty = ml_write_excel_data.prepare_data(str_yestoday, str_yestoday)
     if is_dirty:
         linear_regress.mul_lr_3yang()
-    is_dirty = ml_write_excel_data.prepare_data_3yang1tiao(str_yestoday, str_yestoday)
+    str_yestoday_yestoday, yestoday_yestoday = find_stock.get_pre_trade_day(yestoday)
+    is_dirty = ml_write_excel_data.prepare_data_3yang1tiao(str_yestoday_yestoday, str_yestoday_yestoday)
     if is_dirty:
         linear_regress.mul_lr_3yang1tiao()
 
-update_model()
+# update_model()
+linear_regress.mul_lr_3yang1tiao()
