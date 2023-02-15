@@ -84,12 +84,16 @@ def validate(date):
     str_yestoday_filename = constants.change_date_str_from_database_to_filename(str_yestoday)
 
     fp = open(constants.ml_report_dir + str_yestoday_filename + constants.ml_predict_validate_report_filename, 'w')
-    filename = constants.ml_report_dir + str_yestoday_filename + constants.ml_predict_report_filename
+    filename = constants.ml_report_dir + str_yestoday_filename + constants.ml_predict_report_filename_3yang
     validate_by_file(date, filename, fp)
     filename2 = constants.get_predict_validate_filename(str_yestoday_filename, constants.strategy_3yang1tiao)
     validate_by_file(date, filename2, fp)
     filename3 = constants.get_predict_validate_filename(str_yestoday_filename, constants.strategy_3yang1tiao, 'hushen')
     validate_by_file(date, filename3, fp)
+    filename4 = constants.get_predict_validate_filename(str_yestoday_filename, constants.strategy_3yang, 'hushen')
+    validate_by_file(date, filename4, fp)
+    filename5 = constants.get_predict_validate_filename(str_yestoday_filename, constants.strategy_3yang)
+    validate_by_file(date, filename5, fp)
     fp.close()
 
 def validate_today():

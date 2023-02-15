@@ -9,7 +9,7 @@ import find_stock
 import tushare as ts
 from MachineLearning import linear_regress
 
-def write_to_excel(sheet, date):
+def write_to_excel(sheet, date, filter):
     last_date = sheet.cell(sheet.max_row, 1).value
     if last_date == date:
         return False
@@ -30,10 +30,17 @@ def write_to_excel(sheet, date):
     conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
                                    database=constants.mysql_database_name)
     cursor = conn.cursor()
+
+    df = ts.get_hist_data('sh', start=date, end=date)
+    change_index_sz = df.p_change[0]
+
     curr_row = sheet.max_row+1
     for x in lines:
         data = x.split(' ')
         code = data[0]
+        if not filter(code):
+            continue
+
         name = data[3]
 
         # 需要取得date-2,date-1,date,date+1的数据
@@ -43,6 +50,12 @@ def write_to_excel(sheet, date):
                 str_yestoday, str_theday_before_yestoday, str_next_day))  # 当天
         value = cursor.fetchall()
 
+        high1 = float(value[0][3])
+        high2 = float(value[1][3])
+        high3 = float(value[2][3])
+        low1 = float(value[0][4])
+        low2 = float(value[1][4])
+        low3 = float(value[2][4])
         change1 = float(value[0][6])
         change2 = float(value[1][6])
         change3 = float(value[2][6])
@@ -53,6 +66,17 @@ def write_to_excel(sheet, date):
         turnover2 = float(value[1][7])
         turnover3 = float(value[2][7])
         close3 = float(value[2][2])
+
+        close1 = float(value[0][2])
+        close2 = float(value[1][2])
+        close0 = close1 / (1 + change1 * 0.01)
+        high_change1 = round(((high1 - close0) / close0 * 100), 2)
+        high_change2 = round((high2 - close1) / close1 * 100, 2)
+        high_change3 = round((high3 - close2) / close2 * 100, 2)
+        low_change1 = round((low1 - close0) / close0 * 100, 2)
+        low_change2 = round((low2 - close1) / close1 * 100, 2)
+        low_change3 = round((low3 - close2) / close2 * 100, 2)
+
         high = 0
         if len(value) > 3:
             high = float(value[3][3])
@@ -72,21 +96,25 @@ def write_to_excel(sheet, date):
         sheet.cell(curr_row, 10).value = turnover1
         sheet.cell(curr_row, 11).value = turnover2
         sheet.cell(curr_row, 12).value = turnover3
-        sheet.cell(curr_row, 13).value = high_change
+        sheet.cell(curr_row, 13).value = high_change1
+        sheet.cell(curr_row, 14).value = high_change2
+        sheet.cell(curr_row, 15).value = high_change3
+        sheet.cell(curr_row, 16).value = low_change1
+        sheet.cell(curr_row, 17).value = low_change2
+        sheet.cell(curr_row, 18).value = low_change3
+        sheet.cell(curr_row, 19).value = change_index_sz
+        sheet.cell(curr_row, 20).value = high_change
 
         curr_row += 1
 
     return True
 
-def prepare_data(starttime, endtime):
+def prepare_data_with_filter(starttime, endtime, sheetname, filter):
     is_dirty = False
     filename = constants.ml_data_dir + constants.ml_excel_name
     print(filename)
     f = openpyxl.open(filename)
-    sheet = f[constants.ml_sheetname_data]
-    # starttime = '20230209'
-    # endtime = '20230210'
-    # df = ts.get_hist_data('sh', starttime, endtime)
+    sheet = f[sheetname]
     df = constants.get_ts_pro().trade_cal(exchange='', start_date=starttime, end_date=endtime)
     try:
         for i in range(0, len(df.is_open)):
@@ -95,11 +123,20 @@ def prepare_data(starttime, endtime):
             # 获取股票日期，并转格式（这里为什么要转格式，是因为之前我2018-03-15这样的格式写入数据库的时候，通过通配符%之后他居然给我把-符号当做减号给算出来了查看数据库日期就是2000百思不得其解想了很久最后决定转换格式）
             date = df.cal_date[i]
             date = constants.change_date_str_format(date, '%Y%m%d', '%Y-%m-%d')
-            is_dirty = True if write_to_excel(sheet, date) or is_dirty else False
+            is_dirty = True if write_to_excel(sheet, date, filter) or is_dirty else False
     except:
         print('wtf prepare_data')
     f.save(filename)
     return is_dirty
+
+def prepare_data(starttime, endtime):
+    # isDirty = False
+    isDirty = prepare_data_with_filter(starttime, endtime, constants.ml_sheetname_data,
+                                                  constants.stock_filter_chuangyeban)
+    time.sleep(3)
+    isDirty2 = prepare_data_with_filter(starttime, endtime, constants.ml_sheetname_data_hushen,
+                                                   constants.stock_filter_hushen)
+    return isDirty or isDirty2
 
 def write_to_excel_3yang1tiao(sheet, date, filter):
     last_date = sheet.cell(sheet.max_row, 1).value
@@ -218,11 +255,12 @@ def write_to_excel_3yang1tiao(sheet, date, filter):
     return True
 
 def prepare_data_3yang1tiao(starttime, endtime):
-    prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data,
+    isDirty = prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data,
                                         constants.stock_filter_chuangyeban)
     time.sleep(3)
-    prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data_hushen,
+    isDirty2 = prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data_hushen,
                                         constants.stock_filter_hushen)
+    return isDirty or isDirty2
 
 def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
     is_dirty = False
@@ -244,7 +282,7 @@ def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
     f.save(filename)
     return is_dirty
 
-# prepare_data()
+# prepare_data('20230201', '20230214')
 # linear_regress.mul_lr_3yang()
 # prepare_data_3yang1tiao('20230201', '20230210')
 # linear_regress.mul_lr_3yang1tiao()
