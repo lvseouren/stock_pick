@@ -293,7 +293,7 @@ def predict():
             y += var_value_dict[key] * model_dict[key]
         y = round(y, 2)
         # print('%s %s 预测下一交易日最大涨幅为:%s%%' %(code, name, y))
-        list_result.append([code, name, y])
+        list_result.append([code, name, var_value_dict['x3'], y])
         sheet.cell(row, 13).value = y
     f.save(filename)
 
@@ -304,14 +304,14 @@ def predict():
     filename = constants.ml_report_dir + today + constants.ml_predict_report_filename
     fp = open(filename, 'w')
     for x in list_result:
-        str = '%s %s 预测涨幅：%s%%' %(x[0], x[1], x[2])
+        str = '%s %s 预测涨幅：%s%%' %(x[0], x[1], x[3])
         print(str)
         str+='\n'
         fp.write(str)
     fp.close()
 
-# prepare_data()
-# predict()
+prepare_data()
+predict()
 print('-----------------------------------\n\n')
 prepare_data_3yang1tiao()
 predict_3yang1tiao()

@@ -46,7 +46,7 @@ def validate_3yang1tiao(date):
 def validate_by_file(date, filename, outputfile):
     if not os.path.exists(filename):
         return
-
+    outputfile.write('\n')
     conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
                                    database=constants.mysql_database_name)
     cursor = conn.cursor()
@@ -88,7 +88,7 @@ def validate(date):
     validate_by_file(date, filename, fp)
     filename2 = constants.get_predict_validate_filename(str_yestoday_filename, constants.strategy_3yang1tiao)
     validate_by_file(date, filename2, fp)
-    filename3 = constants.get_predict_validate_filename(date, constants.strategy_3yang1tiao, 'hushen')
+    filename3 = constants.get_predict_validate_filename(str_yestoday_filename, constants.strategy_3yang1tiao, 'hushen')
     validate_by_file(date, filename3, fp)
     fp.close()
 
