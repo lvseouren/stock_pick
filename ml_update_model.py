@@ -18,4 +18,4 @@ def update_model():
         linear_regress.mul_lr_3yang1tiao()
 
 # update_model()
-linear_regress.mul_lr_3yang1tiao()
+# linear_regress.mul_lr_3yang1tiao()
