@@ -17,6 +17,12 @@ ml_predict_validate_report_filename = '_predict_validte.txt'
 ml_predict_report_filename_3yang1tiao = '_predict_3yang1tiao.txt'
 ml_predict_validate_report_filename_3yang1tiao = '_predict_validte_3yang1tiao.txt'
 
+def get_predict_validate_filename(date, strategy, type=''):
+    if len(type) > 0:
+        return ml_report_dir + '%s_predict_%s__predict_%s.txt' %(date, type, strategy)
+    else:
+        return ml_report_dir + '%s_predict__predict_%s.txt' % (date, strategy)
+
 # mysql
 mysql_user = 'root'
 mysql_password = 'abc123'
@@ -70,7 +76,7 @@ change_limit_2yang = 6
 change_limit_3yang1tiao_lower_bound = -10
 change_limit_3yang1tiao_upper_bound = 2
 
-position_alert_change = 4
+position_alert_change = 5
 check_position_interval = 5
 
 def get_change_limit():

@@ -9,7 +9,7 @@ import constants
 import find_stock
 
 def take_third(elem):
-    return elem[2]
+    return elem[3]
 
 def prepare_data_3yang1tiao():
     prepare_data_3yang1tiao_chuangyeban()
@@ -44,7 +44,12 @@ def prepare_data_3yang1tiao_with_filter(filter, sheetname):
                                    database=constants.mysql_database_name)
     cursor = conn.cursor()
     df = ts.get_hist_data('sh', start=date, end=date)
-    change_index_sz = df.p_change[0]
+    change_index_sz = df.p_change[0] if not df.empty else 0
+    if change_index_sz == 0:
+        df = ts.get_realtime_quotes('sh')
+        curr_price = float(df.price[0])
+        pre_close = float(df.pre_close[0])
+        change_index_sz = round((curr_price - pre_close)/pre_close * 100, 2)
 
     for x in lines:
         data = x.split(' ')
@@ -87,6 +92,8 @@ def prepare_data_3yang1tiao_with_filter(filter, sheetname):
         low_change2 = round((low2 - close1) / close1 * 100, 2)
         low_change3 = round((low3 - close2) / close2 * 100, 2)
 
+        if code == '301002':
+            print('hah')
         df = ts.get_realtime_quotes(code)
         curr_price = float(df.price[0])
         pre_close = float(df.pre_close[0])
@@ -127,6 +134,7 @@ def prepare_data_3yang1tiao_with_filter(filter, sheetname):
         sheet.cell(curr_row, 23).value = low_change4
         sheet.cell(curr_row, 24).value = change_index_sz
         curr_row += 1
+    sheet.delete_rows(curr_row, sheet.max_row)
     f.save(filename)
 
 def predict_3yang1tiao():
@@ -166,7 +174,7 @@ def predict_3yang1tiao_of_sheet(sheetname, modelname):
             y += var_value_dict[key] * model_dict[key]
         y = round(y, 2)
         # print('%s %s 预测下一交易日最大涨幅为:%s%%' % (code, name, y))
-        list_result.append([code, name, y, var_value_dict['x4']])
+        list_result.append([code, name, var_value_dict['x4'], y])
         sheet.cell(row, 25).value = y
     f.save(filename)
 
@@ -177,7 +185,7 @@ def predict_3yang1tiao_of_sheet(sheetname, modelname):
     filename = constants.ml_report_dir + today + '_' + sheetname + '_' + constants.ml_predict_report_filename_3yang1tiao
     fp = open(filename, 'w')
     for x in list_result:
-        str = '%s %s 今日涨幅：%s%% 预测明日涨幅：%s%%' % (x[0], x[1], x[3], x[2])
+        str = '%s %s 今日涨幅：%s%% 预测明日涨幅：%s%%' % (x[0], x[1], x[2], x[3])
         print(str)
         str+='\n'
         fp.write(str)
