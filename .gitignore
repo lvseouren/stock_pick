@@ -3,3 +3,4 @@ __pycache__/*
 .idea/*
 @AutomationLog.txt
 MachineLearning/__pycache__/linear_regress.cpython-37.pyc
+MachineLearning/__pycache__/linear_regress.cpython-311.pyc

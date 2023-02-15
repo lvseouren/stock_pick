@@ -38,4 +38,7 @@ def send_email(subject, att_file_names, att_suffixs, is_send_bao=False):
     if is_send_bao:
         receiver2 = '942259616@qq.com'
         smtp.sendmail(sender, receiver2, msg.as_string())
+
+    receiver3 = '13112355359@163.com'
+    smtp.sendmail(sender, receiver3, msg.as_string())
     smtp.quit()

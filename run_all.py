@@ -21,7 +21,7 @@ if __name__ == '__main__':
 	today = time.strftime('%Y-%m-%d')
 	# today = '2023-02-10'
 	win_rates.rate(today)
-	str = '今天的股票行情来啦(strict_level=%s)' % (constants.strict_level)
+	str = '今天的cfmm来啦(strict_level=%s)' % (constants.strict_level)
 	filename1 = test_report_dir + today + constants.filename_2yang
 	filename2 = test_report_dir + today + constants.filename_3yang
 	filename4 = constants.ml_report_dir + today + '_' + constants.ml_sheet_name_predict + '_' + constants.ml_predict_report_filename_3yang1tiao
