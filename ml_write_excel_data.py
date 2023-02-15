@@ -97,7 +97,7 @@ def prepare_data(starttime, endtime):
             date = constants.change_date_str_format(date, '%Y%m%d', '%Y-%m-%d')
             is_dirty = True if write_to_excel(sheet, date) or is_dirty else False
     except:
-        print('wtf')
+        print('wtf prepare_data')
     f.save(filename)
     return is_dirty
 
@@ -240,7 +240,7 @@ def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
             is_dirty = True if write_to_excel_3yang1tiao(sheet, date, filter) or is_dirty else False
             time.sleep(1)
     except:
-        print('wtf')
+        print('wtf prepare_data_3yang1tiao_with_filter')
     f.save(filename)
     return is_dirty
 
