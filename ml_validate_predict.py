@@ -74,9 +74,12 @@ def validate_by_file(date, filename, outputfile):
         change = (high - pre_close) / pre_close * 100
         change = round(change, 2)
         x = x.replace('\n', '')
-        str = '%s 实际最高涨幅：%s%%\n' % (x, change)
+        str = '%s 实际最高涨幅：%s%%' % (x, change)
         print(str)
+        str+='\n'
         outputfile.write(str)
+    print('\n')
+    outputfile.write('\n')
 
 def validate(date):
     now = datetime.date(*map(int, date.split('-')))

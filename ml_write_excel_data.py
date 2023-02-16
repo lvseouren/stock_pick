@@ -130,7 +130,7 @@ def prepare_data_with_filter(starttime, endtime, sheetname, filter):
     return is_dirty
 
 def prepare_data(starttime, endtime):
-    # isDirty = False
+    isDirty = False
     isDirty = prepare_data_with_filter(starttime, endtime, constants.ml_sheetname_data,
                                                   constants.stock_filter_chuangyeban)
     time.sleep(3)
@@ -218,8 +218,11 @@ def write_to_excel_3yang1tiao(sheet, date, filter):
         low_change4 = round((low4 - close3) / close3 * 100, 2)
 
         high = 0
+        change5 = 0
         if len(value) > 4:
             high = float(value[4][3])
+            change5 = float(value[4][6])
+
         high_change = round((high - close4) / close4 * 100, 2)
         print('%s %s %s最高涨幅为:%s' % (code, name, str_next_day, high_change))
         if code == '600970':
@@ -249,12 +252,13 @@ def write_to_excel_3yang1tiao(sheet, date, filter):
         sheet.cell(curr_row, 22).value = low_change3
         sheet.cell(curr_row, 23).value = low_change4
         sheet.cell(curr_row, 24).value = change_index_sz
-        sheet.cell(curr_row, 25).value = high_change
+        sheet.cell(curr_row, 25).value = change5
         curr_row += 1
 
     return True
 
 def prepare_data_3yang1tiao(starttime, endtime):
+    isDirty = False
     isDirty = prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data,
                                         constants.stock_filter_chuangyeban)
     time.sleep(3)
@@ -270,12 +274,13 @@ def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
     sheet = f[sheetname]
     df = constants.get_ts_pro().trade_cal(exchange='', start_date=starttime, end_date=endtime)
     try:
-        for i in range(0, len(df.is_open)):
+        for i in reversed(range(0, len(df.is_open))):
             if df.is_open[i] == 0:
                 continue
             date = df.cal_date[i]
             date = constants.change_date_str_format(date, '%Y%m%d', '%Y-%m-%d')
-            is_dirty = True if write_to_excel_3yang1tiao(sheet, date, filter) or is_dirty else False
+            temp_dirty = write_to_excel_3yang1tiao(sheet, date, filter)
+            is_dirty = is_dirty or temp_dirty
             time.sleep(1)
     except:
         print('wtf prepare_data_3yang1tiao_with_filter')
@@ -284,7 +289,7 @@ def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
 
 # prepare_data('20230201', '20230214')
 # linear_regress.mul_lr_3yang()
-# prepare_data_3yang1tiao('20230201', '20230210')
+# prepare_data_3yang1tiao('20230201', '20230213')
 # linear_regress.mul_lr_3yang1tiao()
 
 

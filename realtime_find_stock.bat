@@ -3,4 +3,4 @@ start mshta vbscript:createobject("wscript.shell").run("""%~0"" hide",0)(window.
 :CmdBegin
 F:
 cd F:\GitRoot\stock_pick\
-python F:\GitRoot\stock_pick\realtime_find_stock.py
+python F:\GitRoot\stock_pick\everyday_findstock.py

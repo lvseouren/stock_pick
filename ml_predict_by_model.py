@@ -23,6 +23,7 @@ def prepare_data_3yang1tiao_hushen():
 
 def prepare_data_3yang1tiao_with_filter(filter, sheetname):
     date = time.strftime('%Y-%m-%d')
+    # date = '2023-02-15'
     now = datetime.date(*map(int, date.split('-')))
     str_yestoday, yestoday = find_stock.get_pre_trade_day(now)
     str_yestoday_filename = constants.get_date_str_for_filename(yestoday)
@@ -336,6 +337,8 @@ def predict_of_sheet(sheetname, modelname):
     # print("%s" %list_result)
     print('\n\n')
     today = sheet.cell(2, 1).value
+    if not today:
+        today = time.strftime('%Y-%m-%d')
     filename = constants.ml_report_dir + today + '_' + sheetname + '_' + constants.ml_predict_report_filename_3yang
     fp = open(filename, 'w')
     for x in list_result:

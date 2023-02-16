@@ -103,9 +103,14 @@ def overall_winrate(dates):
 		fwinrate.close()
 		time.sleep(1)
 
+	# time.sleep(3)
+	# for day in [5, 6, 7]:
+	# 	cal_3yang_winrate_buy_before_n_day(day)
+	# 	time.sleep(2)
+
+def overall_cal_hold_n_day_winrate():
 	for day in [5, 6, 7]:
 		cal_3yang_winrate_buy_before_n_day(day)
-		time.sleep(1)
 
 # 遍历集合中的标的，取得其今天的最高股价以及昨天的收盘价，看涨幅是否大于1个点
 def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
@@ -155,13 +160,13 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 			close_today = float(df.price[0])
 			change_close = round((close_today - close)/close * 100, 2)
 			change_sum_close += change_close
-			str = '%s %s 涨幅：%s\n' % (code, df.name[0], change)
+			str = '%s %s 涨幅：%s' % (code, df.name[0], change)
 			# if strategy == constants.strategy_3yang:
 			print(str)
 			if close < high and change > 1:
 				count += 1
 
-				ftoday.write(str)
+				ftoday.write(str+'\n')
 				# if strategy == constants.strategy_3yang:
 				# 	print(str)
 		except:
@@ -303,3 +308,4 @@ def cal_3yang_winrate_buy_before_n_day(n):
 
 # realtime_overall_winrate()
 #rate('2018-03-16')
+# overall_cal_hold_n_day_winrate()
