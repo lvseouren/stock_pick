@@ -43,7 +43,7 @@ def validate_3yang1tiao(date):
         print(str)
         fp.write(str)
 
-def validate_by_file(date, filename, outputfile):
+def validate_by_file(date, filename, outputfile, is_use_high=False):
     if not os.path.exists(filename):
         return
     outputfile.write('\n')
@@ -66,15 +66,20 @@ def validate_by_file(date, filename, outputfile):
         value = cursor.fetchall()
 
         high = float(value[1][3]) if len(value) > 1 else -1
+        curr_price = float(value[1][2]) if len(value) > 1 else -1
         if high < 0:
             df = ts.get_realtime_quotes(code)
             high = float(df.high)
+            curr_price = float(df.price)
         pre_close = float(value[0][2])
 
-        change = (high - pre_close) / pre_close * 100
+        change = (curr_price - pre_close) / pre_close * 100
+        if is_use_high:
+            change = (high - pre_close) / pre_close * 100
         change = round(change, 2)
         x = x.replace('\n', '')
-        str = '%s 实际最高涨幅：%s%%' % (x, change)
+        type_str = '最高' if is_use_high else '收盘'
+        str = '%s 实际%s涨幅：%s%%' % (x, type_str, change)
         print(str)
         str+='\n'
         outputfile.write(str)
@@ -94,9 +99,9 @@ def validate(date):
     filename3 = constants.get_predict_validate_filename(str_yestoday_filename, constants.strategy_3yang1tiao, 'hushen')
     validate_by_file(date, filename3, fp)
     filename4 = constants.get_predict_validate_filename(str_yestoday_filename, constants.strategy_3yang, 'hushen')
-    validate_by_file(date, filename4, fp)
+    validate_by_file(date, filename4, fp, True)
     filename5 = constants.get_predict_validate_filename(str_yestoday_filename, constants.strategy_3yang)
-    validate_by_file(date, filename5, fp)
+    validate_by_file(date, filename5, fp, True)
     fp.close()
 
 def validate_today():

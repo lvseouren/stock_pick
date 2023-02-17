@@ -179,16 +179,17 @@ def predict_3yang1tiao_of_sheet(sheetname, modelname):
 
     list_result.sort(key=take_third, reverse=True)
     # print("%s" %list_result)
-    print('\n\n')
+    print('\n')
     today = sheet.cell(2, 1).value
     filename = constants.ml_report_dir + today + '_' + sheetname + '_' + constants.ml_predict_report_filename_3yang1tiao
     fp = open(filename, 'w')
     for x in list_result:
-        str = '%s %s 今日涨幅：%s%% 预测明日涨幅：%s%%' % (x[0], x[1], x[2], x[3])
+        str = '%s %s 今日涨幅：%s%% 预测明日收盘涨幅：%s%%' % (x[0], x[1], x[2], x[3])
         print(str)
         str+='\n'
         fp.write(str)
     fp.close()
+    print('\n')
 
 def prepare_data():
     prepare_data_with_filter(constants.stock_filter_chuangyeban, constants.ml_sheet_name_predict)
@@ -335,18 +336,19 @@ def predict_of_sheet(sheetname, modelname):
 
     list_result.sort(key=take_third, reverse=True)
     # print("%s" %list_result)
-    print('\n\n')
+    print('\n')
     today = sheet.cell(2, 1).value
     if not today:
         today = time.strftime('%Y-%m-%d')
     filename = constants.ml_report_dir + today + '_' + sheetname + '_' + constants.ml_predict_report_filename_3yang
     fp = open(filename, 'w')
     for x in list_result:
-        str = '%s %s 今日涨幅：%s%% 预测明日涨幅：%s%%' % (x[0], x[1], x[2], x[3])
+        str = '%s %s 今日涨幅：%s%% 预测明日最高涨幅：%s%%' % (x[0], x[1], x[2], x[3])
         print(str)
         str+='\n'
         fp.write(str)
     fp.close()
+    print('\n')
 
 prepare_data()
 predict()

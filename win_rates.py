@@ -103,7 +103,9 @@ def overall_winrate(dates):
 		fwinrate.close()
 		time.sleep(1)
 
-	# time.sleep(3)
+	time.sleep(3)
+	overall_cal_hold_n_day_winrate()
+
 	# for day in [5, 6, 7]:
 	# 	cal_3yang_winrate_buy_before_n_day(day)
 	# 	time.sleep(2)
@@ -160,7 +162,7 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 			close_today = float(df.price[0])
 			change_close = round((close_today - close)/close * 100, 2)
 			change_sum_close += change_close
-			str = '%s %s 涨幅：%s' % (code, df.name[0], change)
+			str = '%s %s 最高涨幅：%s%%' % (code, df.name[0], change)
 			# if strategy == constants.strategy_3yang:
 			print(str)
 			if close < high and change > 1:
