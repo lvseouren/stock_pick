@@ -329,14 +329,19 @@ def get_trade_day_before_n_day(now, n):
 	return ret, now
 
 def is_trade_day(date):
-	if constants.has_cache:
-		date = constants.change_date_str_from_database_to_filename(date)
-		ret = date in constants.cache_df.index
-		return ret
-	pro = constants.get_ts_pro()
-	df = pro.trade_cal(exchange='', start_date=date, end_date=date)
-	value = df.is_open[0]
-	return value == 1
+	if not constants.has_cache_trade_day_data:
+		today = time.strftime('%Y-%m-%d')
+		df = ts.get_hist_data('sh', '2022-01-01', today)
+		constants.cache_trade_day_data = df
+		constants.has_cache_trade_day_data = True
+
+	date = constants.change_date_str_from_database_to_filename(date)
+	ret = date in constants.cache_trade_day_data.index
+	return ret
+	# pro = constants.get_ts_pro()
+	# df = pro.trade_cal(exchange='', start_date=date, end_date=date)
+	# value = df.is_open[0]
+	# return value == 1
 
 
 

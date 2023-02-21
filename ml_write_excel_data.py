@@ -118,8 +118,8 @@ def prepare_data_with_filter(starttime, endtime, sheetname, filter):
     f = openpyxl.open(filename)
     sheet = f[sheetname]
     df = ts.get_hist_data('sh', '2022-01-01', '2023-01-30')
-    constants.cache_df = df
-    constants.has_cache = True
+    constants.cache_trade_day_data = df
+    constants.has_cache_trade_day_data = True
     df = ts.get_hist_data('sh', starttime, endtime)
 
     try:
@@ -189,87 +189,89 @@ def write_to_excel_3yang1tiao(sheet, date, filter, change_index_sz):
             str_yestoday, str_theday_before_yestoday, str_next_day, str_next_next_day))  # 当天
         value = cursor.fetchall()
 
-        high1 = float(value[0][3])
-        high2 = float(value[1][3])
-        high3 = float(value[2][3])
-        high4 = float(value[3][3])
-        low1 = float(value[0][4])
-        low2 = float(value[1][4])
-        low3 = float(value[2][4])
-        low4 = float(value[3][4])
-        change1 = float(value[0][6])
-        change2 = float(value[1][6])
-        change3 = float(value[2][6])
-        change4 = float(value[3][6])
-        if change4 > constants.change_limit_3yang1tiao_upper_bound:
-            continue
-        volume1 = float(value[0][5])
-        volume2 = float(value[1][5])
-        volume3 = float(value[2][5])
-        volume4 = float(value[3][5])
-        turnover1 = float(value[0][7])
-        turnover2 = float(value[1][7])
-        turnover3 = float(value[2][7])
-        turnover4 = float(value[3][7])
-        close4 = float(value[3][2])
+        try:
+            high1 = float(value[0][3])
+            high2 = float(value[1][3])
+            high3 = float(value[2][3])
+            high4 = float(value[3][3])
+            low1 = float(value[0][4])
+            low2 = float(value[1][4])
+            low3 = float(value[2][4])
+            low4 = float(value[3][4])
+            change1 = float(value[0][6])
+            change2 = float(value[1][6])
+            change3 = float(value[2][6])
+            change4 = float(value[3][6])
+            if change4 > constants.change_limit_3yang1tiao_upper_bound:
+                continue
+            volume1 = float(value[0][5])
+            volume2 = float(value[1][5])
+            volume3 = float(value[2][5])
+            volume4 = float(value[3][5])
+            turnover1 = float(value[0][7])
+            turnover2 = float(value[1][7])
+            turnover3 = float(value[2][7])
+            turnover4 = float(value[3][7])
+            close4 = float(value[3][2])
 
-        close1 = float(value[0][2])
-        close2 = float(value[1][2])
-        close3 = float(value[2][2])
-        close0 = close1/(1+change1*0.01)
-        high_change1 = round(((high1 - close0) / close0 * 100), 2)
-        high_change2 = round((high2 - close1) / close1 * 100, 2)
-        high_change3 = round((high3 - close2) / close2 * 100, 2)
-        high_change4 = round((high4 - close3) / close3 * 100, 2)
-        low_change1 = round((low1 - close0) / close0 * 100, 2)
-        low_change2 = round((low2 - close1) / close1 * 100, 2)
-        low_change3 = round((low3 - close2) / close2 * 100, 2)
-        low_change4 = round((low4 - close3) / close3 * 100, 2)
+            close1 = float(value[0][2])
+            close2 = float(value[1][2])
+            close3 = float(value[2][2])
+            close0 = close1/(1+change1*0.01)
+            high_change1 = round(((high1 - close0) / close0 * 100), 2)
+            high_change2 = round((high2 - close1) / close1 * 100, 2)
+            high_change3 = round((high3 - close2) / close2 * 100, 2)
+            high_change4 = round((high4 - close3) / close3 * 100, 2)
+            low_change1 = round((low1 - close0) / close0 * 100, 2)
+            low_change2 = round((low2 - close1) / close1 * 100, 2)
+            low_change3 = round((low3 - close2) / close2 * 100, 2)
+            low_change4 = round((low4 - close3) / close3 * 100, 2)
 
-        high = 0
-        change5 = 0
-        if len(value) > 4:
-            high = float(value[4][3])
-            change5 = float(value[4][6])
+            high = 0
+            change5 = 0
+            if len(value) > 4:
+                high = float(value[4][3])
+                change5 = float(value[4][6])
 
-        high_change = round((high - close4) / close4 * 100, 2)
-        print('%s %s %s最高涨幅为:%s' % (code, name, str_next_day, high_change))
-        if code == '600970':
-            print('gotcha')
-        sheet.cell(curr_row, 1).value = date
-        sheet.cell(curr_row, 2).value = code
-        sheet.cell(curr_row, 3).value = name
+            high_change = round((high - close4) / close4 * 100, 2)
+            print('%s %s %s最高涨幅为:%s%' % (code, name, str_next_day, high_change))
 
-        sheet.cell(curr_row, 4).value = change1
-        sheet.cell(curr_row, 5).value = change2
-        sheet.cell(curr_row, 6).value = change3
-        sheet.cell(curr_row, 7).value = change4
-        sheet.cell(curr_row, 8).value = volume1
-        sheet.cell(curr_row, 9).value = volume2
-        sheet.cell(curr_row, 10).value = volume3
-        sheet.cell(curr_row, 11).value = volume4
-        sheet.cell(curr_row, 12).value = turnover1
-        sheet.cell(curr_row, 13).value = turnover2
-        sheet.cell(curr_row, 14).value = turnover3
-        sheet.cell(curr_row, 15).value = turnover4
-        sheet.cell(curr_row, 16).value = high_change1
-        sheet.cell(curr_row, 17).value = high_change2
-        sheet.cell(curr_row, 18).value = high_change3
-        sheet.cell(curr_row, 19).value = high_change4
-        sheet.cell(curr_row, 20).value = low_change1
-        sheet.cell(curr_row, 21).value = low_change2
-        sheet.cell(curr_row, 22).value = low_change3
-        sheet.cell(curr_row, 23).value = low_change4
-        sheet.cell(curr_row, 24).value = change_index_sz
-        sheet.cell(curr_row, 25).value = change5
-        curr_row += 1
+            sheet.cell(curr_row, 1).value = date
+            sheet.cell(curr_row, 2).value = code
+            sheet.cell(curr_row, 3).value = name
+
+            sheet.cell(curr_row, 4).value = change1
+            sheet.cell(curr_row, 5).value = change2
+            sheet.cell(curr_row, 6).value = change3
+            sheet.cell(curr_row, 7).value = change4
+            sheet.cell(curr_row, 8).value = volume1
+            sheet.cell(curr_row, 9).value = volume2
+            sheet.cell(curr_row, 10).value = volume3
+            sheet.cell(curr_row, 11).value = volume4
+            sheet.cell(curr_row, 12).value = turnover1
+            sheet.cell(curr_row, 13).value = turnover2
+            sheet.cell(curr_row, 14).value = turnover3
+            sheet.cell(curr_row, 15).value = turnover4
+            sheet.cell(curr_row, 16).value = high_change1
+            sheet.cell(curr_row, 17).value = high_change2
+            sheet.cell(curr_row, 18).value = high_change3
+            sheet.cell(curr_row, 19).value = high_change4
+            sheet.cell(curr_row, 20).value = low_change1
+            sheet.cell(curr_row, 21).value = low_change2
+            sheet.cell(curr_row, 22).value = low_change3
+            sheet.cell(curr_row, 23).value = low_change4
+            sheet.cell(curr_row, 24).value = change_index_sz
+            sheet.cell(curr_row, 25).value = change5
+            curr_row += 1
+        except:
+            print("%s %s %s数据异常" % (code, name, date))
 
     return True
 
 def prepare_data_3yang1tiao(starttime, endtime):
     isDirty = False
-    isDirty = prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data,
-                                        constants.stock_filter_chuangyeban)
+    # isDirty = prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data,
+    #                                     constants.stock_filter_chuangyeban)
     time.sleep(3)
     isDirty2 = prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data_hushen,
                                         constants.stock_filter_hushen)
@@ -289,7 +291,7 @@ def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
             changes = df.p_change
             change = changes[date]
             print("写入%s的数据" % date)
-            
+
             temp_dirty = write_to_excel_3yang1tiao(sheet, date, filter, change)
             is_dirty = is_dirty or temp_dirty
             time.sleep(1)
@@ -298,9 +300,9 @@ def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
     f.save(filename)
     return is_dirty
 
-prepare_data('2022-01-10','2023-01-13')
+# prepare_data('2022-01-10','2023-01-13')
 # linear_regress.mul_lr_3yang()
-prepare_data_3yang1tiao('2022-01-10','2023-01-13')
+# prepare_data_3yang1tiao('2022-01-10','2023-01-13')
 # linear_regress.mul_lr_3yang1tiao()
 
 

@@ -18,8 +18,8 @@ ml_predict_validate_report_filename = '_predict_validte.txt'
 ml_predict_report_filename_3yang1tiao = '_predict_3yang1tiao.txt'
 ml_predict_validate_report_filename_3yang1tiao = '_predict_validte_3yang1tiao.txt'
 
-cache_df = False
-has_cache = False
+cache_trade_day_data = False
+has_cache_trade_day_data = False
 
 def get_predict_validate_filename(date, strategy, type=''):
     if len(type) > 0:
