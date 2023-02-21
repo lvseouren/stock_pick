@@ -117,11 +117,7 @@ def prepare_data_with_filter(starttime, endtime, sheetname, filter):
     print(filename)
     f = openpyxl.open(filename)
     sheet = f[sheetname]
-    df = ts.get_hist_data('sh', '2022-01-01', '2023-01-30')
-    constants.cache_trade_day_data = df
-    constants.has_cache_trade_day_data = True
     df = ts.get_hist_data('sh', starttime, endtime)
-
     try:
         for i in reversed(range(0, len(df))):
             # 获取股票日期，并转格式（这里为什么要转格式，是因为之前我2018-03-15这样的格式写入数据库的时候，通过通配符%之后他居然给我把-符号当做减号给算出来了查看数据库日期就是2000百思不得其解想了很久最后决定转换格式）
