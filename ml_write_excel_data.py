@@ -270,8 +270,8 @@ def write_to_excel_3yang1tiao(sheet, date, filter, change_index_sz):
 
 def prepare_data_3yang1tiao(starttime, endtime):
     isDirty = False
-    # isDirty = prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data,
-    #                                     constants.stock_filter_chuangyeban)
+    isDirty = prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data,
+                                        constants.stock_filter_chuangyeban)
     time.sleep(3)
     isDirty2 = prepare_data_3yang1tiao_with_filter(starttime, endtime, constants.ml_sheetname_data_hushen,
                                         constants.stock_filter_hushen)
