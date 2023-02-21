@@ -60,9 +60,10 @@ def prepare_data_3yang1tiao_with_filter(filter, sheetname):
         name = data[3]
         # 需要取得date-2,date-1,date,date+1的数据
         # 1,2,3分别对应3yang标的day1,2,3的数据
+        today = constants.change_date_str_form_filename_to_database(date)
         cursor.execute(
-            'select * from stock_' + code + ' where date=%s or date =%s or date =%s order by date asc' % (
-            str_yestoday, str_yestoday_yestoday, str_yestoday_yestoday_yestoday))
+            'select * from stock_' + code + ' where date=%s or date =%s or date =%s or date =%s order by date asc' % (
+            str_yestoday, str_yestoday_yestoday, str_yestoday_yestoday_yestoday, today))
         value = cursor.fetchall()
 
         change1 = float(value[0][6])
@@ -98,6 +99,12 @@ def prepare_data_3yang1tiao_with_filter(filter, sheetname):
         pre_close = float(df.pre_close[0])
         curr_high = float(df.high[0])
         curr_low = float(df.low[0])
+        if len(value) > 3:
+            curr_price = float(value[3][2])
+            pre_close = close3
+            curr_high = float(value[3][3])
+            curr_low = float(value[3][4])
+
         change4 = round((curr_price - pre_close) / pre_close * 100, 2)
         if change4 > constants.change_limit_3yang1tiao_upper_bound:
             continue
@@ -186,7 +193,7 @@ def predict_3yang1tiao_of_sheet(sheetname, modelname):
     filename = constants.ml_report_dir + today + '_' + sheetname + '_' + constants.ml_predict_report_filename_3yang1tiao
     fp = open(filename, 'w')
     for x in list_result:
-        str = '%s %s 今日涨幅：%s%% 预测明日收盘涨幅：%s%%' % (x[0], x[1], x[2], x[3])
+        str = '%s %s %s涨幅：%s%% 预测明日收盘涨幅：%s%%' % (x[0], x[1], today, x[2], x[3])
         print(str)
         str+='\n'
         fp.write(str)
@@ -194,12 +201,11 @@ def predict_3yang1tiao_of_sheet(sheetname, modelname):
     print('\n')
 
 def prepare_data():
+    find_stock.valid_stock_2to3()
     prepare_data_with_filter(constants.stock_filter_chuangyeban, constants.ml_sheet_name_predict)
     prepare_data_with_filter(constants.stock_filter_hushen, constants.ml_sheet_name_predict_hushen)
 
 def prepare_data_with_filter(filter, sheetname):
-    find_stock.valid_stock_2to3()
-
     date = time.strftime('%Y-%m-%d')
     filename = constants.report_dir + date + constants.filename_2to3
     # 遍历所有2进3标的，将所需的数据写入到excel表predict页中
@@ -236,8 +242,9 @@ def prepare_data_with_filter(filter, sheetname):
         name = data[3]
         # 需要取得date-2,date-1,date,date+1的数据
         # 1,2,3分别对应3yang标的day1,2,3的数据
+        today = constants.change_date_str_form_filename_to_database(date)
         cursor.execute(
-            'select * from stock_' + code + ' where date=%s or date =%s order by date asc' % (str_yestoday, str_theday_before_yestoday))  # 当天
+            'select * from stock_' + code + ' where date=%s or date =%s or date =%s order by date asc' % (str_yestoday, str_theday_before_yestoday, today))  # 当天
         value = cursor.fetchall()
 
         change1 = float(value[0][6])
@@ -263,6 +270,11 @@ def prepare_data_with_filter(filter, sheetname):
         pre_close = float(df.pre_close[0])
         curr_high = float(df.high[0])
         curr_low = float(df.low[0])
+        if len(value) > 2:
+            curr_price = float(value[2][2])
+            pre_close = close2
+            curr_high = float(value[2][3])
+            curr_low = float(value[2][4])
 
         change3 = round((curr_price - pre_close)/pre_close * 100, 2)
         volume3 = float(df.volume[0])/100
@@ -344,8 +356,9 @@ def predict_of_sheet(sheetname, modelname):
         today = time.strftime('%Y-%m-%d')
     filename = constants.ml_report_dir + today + '_' + sheetname + '_' + constants.ml_predict_report_filename_3yang
     fp = open(filename, 'w')
+
     for x in list_result:
-        str = '%s %s 今日涨幅：%s%% 预测明日最高涨幅：%s%%' % (x[0], x[1], x[2], x[3])
+        str = '%s %s %s涨幅：%s%% 预测明日最高涨幅：%s%%' % (x[0], x[1], today, x[2], x[3])
         print(str)
         str+='\n'
         fp.write(str)
