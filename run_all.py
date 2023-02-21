@@ -45,5 +45,5 @@ def run_dates(starttime, endtime):
 
 today = time.strftime('%Y-%m-%d')
 run_date(today)
-# ml_update_model.update_model()
+ml_update_model.update_model()
 # run_dates('2022-01-01','2023-01-13')
