@@ -140,8 +140,10 @@ def valid_stock_3yang():
 
 find_stock.valid_stock_2to3()
 print('\n\n\n')
-# valid_stock_3yang()
 valid_stock_3yang1tiao()
-new_time = time.strftime('%Y-%m-%d')
-subject = '%s 2进3标的列表' % new_time
-filename = constants.report_dir + new_time + constants.filename_2to3
+# print('\n\n\n')
+# valid_stock_3yang()
+
+# new_time = time.strftime('%Y-%m-%d')
+# subject = '%s 2进3标的列表' % new_time
+# filename = constants.report_dir + new_time + constants.filename_2to3

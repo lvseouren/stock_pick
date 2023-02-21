@@ -13,4 +13,5 @@ new_time = time.strftime('%Y-%m-%d')
 subject = '%s 2进3标的列表' % new_time
 filename = constants.report_dir + new_time + constants.filename_2to3
 filename2 = constants.ml_report_dir + new_time + '_' + constants.ml_sheet_name_predict + '_' + constants.ml_predict_report_filename_3yang1tiao
-email_sender.send_email(subject, [filename, filename2], ["2进3标的数据", '预测数据'])
+filename3 = constants.ml_report_dir + new_time + '_' + constants.ml_sheet_name_predict_hushen + '_' + constants.ml_predict_report_filename_3yang1tiao
+email_sender.send_email(subject, [filename3,filename2, filename], ["非创业板预测数据", '创业板预测数据', "  2进3标的数据"])
