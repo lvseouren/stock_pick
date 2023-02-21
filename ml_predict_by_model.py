@@ -151,7 +151,7 @@ def predict_3yang1tiao_of_sheet(sheetname, modelname):
         var_name = data[0]
         var_cof = data[1]
         model_dict[var_name] = float(var_cof)
-    print('%s' % model_dict)
+    # print('%s' % model_dict)
 
     filename = constants.ml_data_dir + constants.ml_excel_name_3yang1tiao
     print(filename)
@@ -181,6 +181,8 @@ def predict_3yang1tiao_of_sheet(sheetname, modelname):
     # print("%s" %list_result)
     print('\n')
     today = sheet.cell(2, 1).value
+    if not today:
+        return
     filename = constants.ml_report_dir + today + '_' + sheetname + '_' + constants.ml_predict_report_filename_3yang1tiao
     fp = open(filename, 'w')
     for x in list_result:
@@ -308,7 +310,7 @@ def predict_of_sheet(sheetname, modelname):
         var_name = data[0]
         var_cof = data[1]
         model_dict[var_name] = float(var_cof)
-    print('%s' %model_dict)
+    # print('%s' %model_dict)
 
     filename = constants.ml_data_dir + constants.ml_excel_name
     print(filename)

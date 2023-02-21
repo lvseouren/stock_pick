@@ -329,10 +329,16 @@ def get_trade_day_before_n_day(now, n):
 	return ret, now
 
 def is_trade_day(date):
-	pro = ts.pro_api()
+	if constants.has_cache:
+		date = constants.change_date_str_from_database_to_filename(date)
+		ret = date in constants.cache_df.index
+		return ret
+	pro = constants.get_ts_pro()
 	df = pro.trade_cal(exchange='', start_date=date, end_date=date)
 	value = df.is_open[0]
 	return value == 1
+
+
 
 def get_target_day_count(start_date, end_date):
 	start_date = constants.get_date_str_for_datebase(start_date)
