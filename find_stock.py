@@ -235,6 +235,9 @@ def valid_stock_2to3():
             curr_price = float(df.price[0])
             curr_change = round((curr_price - close)/close * 100, 2)
             curr_high = float(df.high[0])
+            curr_low = float(df.low[0])
+            high_change = round((curr_high - close)/close * 100, 2)
+            low_change = round((curr_low - close) / close * 100, 2)
 
             if curr_change > constants.change_limit_2to3:
                 print('%s %s涨幅(%s)超过阈值(%s), pass' %(code, name, curr_change, constants.change_limit_2to3))
@@ -244,7 +247,7 @@ def valid_stock_2to3():
 
             if volume < curr_volume and close < curr_price:
                 count+=1
-                ftoday.write('%s %s %s %s(涨幅:%s) 最高价:%s\n' %(code, curr_price, curr_volume, df.name[0], curr_change, curr_high))
+                ftoday.write('%s %s %s %s(涨幅:%s%%) 最高涨幅:%s%%,最低涨幅:%s%%\n' %(code, curr_price, curr_volume, df.name[0], curr_change, high_change, low_change))
                 print('%s %s满足特征' %(code, name))
                 list.append([code, name, curr_price, curr_change])
 
