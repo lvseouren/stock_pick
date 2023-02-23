@@ -79,7 +79,8 @@ def validate_by_file(date, filename, outputfile, is_use_high=False):
         change = round(change, 2)
         x = x.replace('\n', '')
         type_str = '最高' if is_use_high else '收盘'
-        str = '%s 实际%s涨幅：%s%%' % (x, type_str, change)
+        industry = find_stock.get_stock_industry(code)
+        str = '(%s)%s 实际%s涨幅：%s%%' % (industry, x, type_str, change)
         print(str)
         str+='\n'
         outputfile.write(str)

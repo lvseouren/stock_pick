@@ -138,9 +138,85 @@ def valid_stock_3yang():
                 f_err_log.write(
                     '%s停牌无数据,或者请查看sql语句是否正确\n' % value_code[i][0])  # 一般不用管，除非执行好多天的数据都为0时那可能输sql语句有问题了
 
+def findstock_safe_3yang():
+    for i in range(1, 5):
+        findstock_3yang_before_n_day(i)
+
+def findstock_3yang_before_n_day(n):
+	today = time.strftime('%Y-%m-%d')
+	now = datetime.date(*map(int, today.split('-')))
+	target_date_str, target_date = find_stock.get_trade_day_before_n_day(now, n)
+	target_date_str = constants.get_date_str_for_filename(target_date)
+	findstock_not_startup_3yang(target_date_str)
+
+# 在最近的3yang标的中寻找没怎么涨的
+def findstock_not_startup_3yang(target_date_str, filer=constants.stock_filter_all):
+    today = time.strftime('%Y-%m-%d')
+    # if not find_stock.is_trade_day(constants.change_date_str_format(today, '%Y-%m-%d', '%Y%m%d')):
+    #     return
+    d1 = datetime.date(*map(int, today.split('-')))
+    d2 = datetime.date(*map(int, target_date_str.split('-')))
+    diff = find_stock.get_target_day_count(d2, d1)
+
+    stockListFileName = constants.report_dir + target_date_str + constants.filename_3yang_list
+    fp = open(stockListFileName, "r")
+    lines = fp.readlines()
+    fp.close()
+
+    flog = open(constants.stats_dir + target_date_str + 'to%s_maybegood.txt' % (today), 'w')
+
+    count = 0
+    valid_count = 0
+    list_goods = []
+    for x in lines:
+        data = x.split(' ')
+        code = data[0]
+        if not filer(code):
+            continue
+        close = float(data[1])
+        name = data[3]
+        try:
+            # 获取单只股票当天的行情
+            df = ts.get_realtime_quotes(code)
+            high = float(df.high[0])
+            if high == 0:
+                continue
+
+            valid_count += 1
+            change = round((high - close) / close * 100, 2)
+
+            open_today = float(df.open[0])
+            change_open = round((open_today - close) / close * 100, 2)
+
+            close_today = float(df.price[0])
+            change_close = round((close_today - close) / close * 100, 2)
+
+            if change < 2 and change > 0:
+                industry = find_stock.get_stock_industry(code)
+                list_goods.append([industry, code, name, change])
+
+            if close < high and change > 1:
+                count += 1
+            str = '%s %s 涨幅：%s%%' % (code, df.name[0], change)
+            flog.write(str)
+            flog.write('\n')
+            print(str)
+        except:
+            print('%s无行情' % code)
+
+    print(stockListFileName)
+    str = '\n以下标的或有机会:\n'
+    print(str)
+    flog.write(str)
+    for x in list_goods:
+        print(x)
+        flog.write('%s\n' % x)
+    flog.close()
+
+findstock_safe_3yang()
 find_stock.valid_stock_2to3()
 print('\n\n\n')
-valid_stock_3yang1tiao()
+# valid_stock_3yang1tiao()
 # print('\n\n\n')
 # valid_stock_3yang()
 

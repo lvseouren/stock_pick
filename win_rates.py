@@ -162,10 +162,15 @@ def realtime_overall_winrate(strategy, wirte_report, stockListFileName=''):
 			close_today = float(df.price[0])
 			change_close = round((close_today - close)/close * 100, 2)
 			change_sum_close += change_close
-			str = '%s %s 最高涨幅：%s%%' % (code, df.name[0], change)
+			type_str = '收盘' if strategy == constants.strategy_3yang1tiao else '最高'
+			industry = find_stock.get_stock_industry(code)
+
+			valid_change = change_close if strategy == constants.strategy_3yang1tiao else change
+
+			str = '(%s)%s %s %s涨幅：%s%%' % (industry, code, df.name[0], type_str, valid_change)
 			# if strategy == constants.strategy_3yang:
 			print(str)
-			if close < high and change > 1:
+			if close < high and valid_change > 1:
 				count += 1
 
 				ftoday.write(str+'\n')
