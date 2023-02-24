@@ -14,6 +14,20 @@ def get_stock_industry(code):
     industry = value[0][2]
     return industry
 
+def get_stock_open_change(code, date):
+    conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
+                                   database=constants.mysql_database_name)
+    cursor = conn.cursor()
+    date_filename = constants.change_date_str_from_database_to_filename(date)
+    now = datetime.date(*map(int, date_filename.split('-')))
+    yestoday_str, yestoday = get_pre_trade_day(now)
+    cursor.execute('select * from stock_%s where date=%s or date=%s order by date asc' % (code, date, yestoday_str))
+    value = cursor.fetchall()
+    pre_close = float(value[0][1])
+    open = float(value[1][1])
+    change = (open - pre_close) / pre_close * 100
+    return change
+
 def get_stock_close_change(code, date):
     conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
                                    database=constants.mysql_database_name)
@@ -22,7 +36,7 @@ def get_stock_close_change(code, date):
     value = cursor.fetchall()
 
     change = value[0][6]
-    return change
+    return float(change)
 
 #从数据库获取股票数据，统计想要查找日期的满足阳包阴并且当天涨停的股票
 def valid_stock(dates):
