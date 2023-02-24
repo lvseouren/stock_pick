@@ -320,7 +320,7 @@ def cal_3yang_winrate_of_all_days():
 	filename = constants.ml_data_dir + constants.ml_excel_name
 	print(filename)
 	f = openpyxl.open(filename)
-	sheetname = constants.ml_sheetname_data_hushen
+	sheetname = constants.ml_sheetname_data
 	sheet = f[sheetname]
 
 	filename_output = constants.ml_report_dir + '交易以来总的盈利情况.txt'
@@ -328,7 +328,7 @@ def cal_3yang_winrate_of_all_days():
 
 	curr_times = 1
 	print('sheet最大行数为%s：' %sheet.max_row)
-	for row in range(2, sheet.max_row + 1):
+	for row in range(3520, sheet.max_row + 1):
 		date = sheet.cell(row, 1).value
 		code = sheet.cell(row, 2).value
 		name = sheet.cell(row, 3).value
@@ -336,14 +336,15 @@ def cal_3yang_winrate_of_all_days():
 		if high_change < -20:
 			continue
 
-		now = datetime.date(*map(int, date.split('-')))
-		next_day_str, next_day = find_stock.get_next_trade_day(now)
-		close_change = find_stock.get_stock_close_change(code, next_day_str)
-		sheet.cell(row, 22).value = close_change
-		# close_change = sheet.cell(row, 22).value
+		# now = datetime.date(*map(int, date.split('-')))
+		# next_day_str, next_day = find_stock.get_next_trade_day(now)
+		# close_change = find_stock.get_stock_close_change(code, next_day_str)
+		# sheet.cell(row, 22).value = close_change
+		close_change = sheet.cell(row, 22).value
 		# close_change = float(close_change)
-		open_change = find_stock.get_stock_open_change(code, next_day_str)
-		sheet.cell(row, 23).value = round(open_change, 2)
+		# open_change = find_stock.get_stock_open_change(code, next_day_str)
+		# sheet.cell(row, 23).value = round(open_change, 2)
+		open_change = sheet.cell(row, 23).value
 
 		use_change = close_change
 		if open_change > 1 or open_change < 0:
@@ -351,7 +352,7 @@ def cal_3yang_winrate_of_all_days():
 		else:
 			use_change = 1 if high_change > 1 else close_change
 
-		print('%s %s %s 涨幅为：%s%%' %(date, code, name, use_change))
+		print('%s %s %s 涨幅为：%s%%' %(date, code, name, round(use_change, 2)))
 		use_change = use_change * 0.01
 		change_factor = 1 + use_change
 		print('变化倍率为:%s' %change_factor)
@@ -364,7 +365,7 @@ def cal_3yang_winrate_of_all_days():
 	fp.close()
 	f.save(filename)
 
-cal_3yang_winrate_of_all_days()
+# cal_3yang_winrate_of_all_days()
 # realtime_overall_winrate()
 #rate('2018-03-16')
 # overall_cal_hold_n_day_winrate()

@@ -23,7 +23,7 @@ def get_stock_open_change(code, date):
     yestoday_str, yestoday = get_pre_trade_day(now)
     cursor.execute('select * from stock_%s where date=%s or date=%s order by date asc' % (code, date, yestoday_str))
     value = cursor.fetchall()
-    pre_close = float(value[0][1])
+    pre_close = float(value[0][2])
     open = float(value[1][1])
     change = (open - pre_close) / pre_close * 100
     return change

@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import datetime
+import os
 import time
 
 import mysql
@@ -15,6 +16,8 @@ def write_to_excel(sheet, date, filter, change_index_sz):
         return False
 
     filename = constants.report_dir + date + constants.filename_3yang_list
+    if not os.path.exist(filename):
+        return False
     fp = open(filename, "r")
     lines = fp.readlines()
     fp.close()
@@ -78,9 +81,15 @@ def write_to_excel(sheet, date, filter, change_index_sz):
             low_change3 = round((low3 - close2) / close2 * 100, 2)
 
             high = 0
+            open = 0
+            close = 0
             if len(value) > 3:
                 high = float(value[3][3])
+                open = float(value[3][1])
+                close = float(value[3][2])
             high_change = round((high - close3)/close3 * 100, 2)
+            open_change = round((open - close3)/close3 * 100, 2)
+            close_change = round((close - close3)/close3 * 100, 2)
             print('%s %s %s最高涨幅为:%s' %(code, name, str_next_day, high_change))
 
             sheet.cell(curr_row, 1).value = date
@@ -105,7 +114,8 @@ def write_to_excel(sheet, date, filter, change_index_sz):
             sheet.cell(curr_row, 19).value = change_index_sz
             sheet.cell(curr_row, 20).value = high_change
             sheet.cell(curr_row, 21).value = find_stock.get_stock_industry(code)
-
+            sheet.cell(curr_row, 22).value = close_change
+            sheet.cell(curr_row, 23).value = open_change
             curr_row += 1
         except:
             print("%s %s %s数据异常" %(code, name, date))
@@ -295,7 +305,7 @@ def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
     f.save(filename)
     return is_dirty
 
-# prepare_data('2023-02-23','2023-02-23')
+# prepare_data('2023-02-24','2023-02-24')
 # linear_regress.mul_lr_3yang()
 # prepare_data_3yang1tiao('2022-01-10','2023-01-13')
 # linear_regress.mul_lr_3yang1tiao()
