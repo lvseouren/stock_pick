@@ -73,14 +73,16 @@ def validate_by_file(date, filename, outputfile, is_use_high=False):
             curr_price = float(df.price)
         pre_close = float(value[0][2])
 
-        change = (curr_price - pre_close) / pre_close * 100
+        curr_change = (curr_price - pre_close) / pre_close * 100
+        change = curr_change
         if is_use_high:
             change = (high - pre_close) / pre_close * 100
         change = round(change, 2)
+        curr_change = round(curr_change, 2)
         x = x.replace('\n', '')
         type_str = '最高' if is_use_high else '收盘'
         industry = find_stock.get_stock_industry(code)
-        str = '(%s)%s 实际%s涨幅：%s%%' % (industry, x, type_str, change)
+        str = '(%s)%s 实际%s涨幅：%s%%;当前涨幅:%s%%' % (industry, x, type_str, change, curr_change)
         print(str)
         str+='\n'
         outputfile.write(str)

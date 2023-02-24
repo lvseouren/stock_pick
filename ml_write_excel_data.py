@@ -104,6 +104,7 @@ def write_to_excel(sheet, date, filter, change_index_sz):
             sheet.cell(curr_row, 18).value = low_change3
             sheet.cell(curr_row, 19).value = change_index_sz
             sheet.cell(curr_row, 20).value = high_change
+            sheet.cell(curr_row, 21).value = find_stock.get_stock_industry(code)
 
             curr_row += 1
         except:
@@ -126,8 +127,6 @@ def prepare_data_with_filter(starttime, endtime, sheetname, filter):
             changes = df.p_change
             change = changes[date]
             print("写入%s的数据" %date)
-            if date == '2022-01-21':
-                print('wtf')
             is_dirty = True if write_to_excel(sheet, date, filter, change) or is_dirty else False
     except:
         print('wtf prepare_data')
@@ -296,7 +295,7 @@ def prepare_data_3yang1tiao_with_filter(starttime, endtime, sheetname, filter):
     f.save(filename)
     return is_dirty
 
-# prepare_data('2022-01-10','2023-01-13')
+# prepare_data('2023-02-23','2023-02-23')
 # linear_regress.mul_lr_3yang()
 # prepare_data_3yang1tiao('2022-01-10','2023-01-13')
 # linear_regress.mul_lr_3yang1tiao()
