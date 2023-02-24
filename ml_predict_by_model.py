@@ -194,7 +194,7 @@ def predict_3yang1tiao_of_sheet(sheetname, modelname):
     fp = open(filename, 'w')
     for x in list_result:
         industry = find_stock.get_stock_industry(x[0])
-        str = '(%s)%s %s %s涨幅：%s%% 预测明日收盘涨幅：%s%%' % (industry, x[0], x[1], today, x[2], x[3])
+        str = '%s %s(%s) %s涨幅：%s%% 预测明日收盘涨幅：%s%%' % (x[0], x[1], industry, today, x[2], x[3])
         print(str)
         str+='\n'
         fp.write(str)
