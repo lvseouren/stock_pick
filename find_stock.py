@@ -14,6 +14,16 @@ def get_stock_industry(code):
     industry = value[0][2]
     return industry
 
+def get_stock_close_change(code, date):
+    conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
+                                   database=constants.mysql_database_name)
+    cursor = conn.cursor()
+    cursor.execute('select * from stock_%s where date=%s' % (code, date))
+    value = cursor.fetchall()
+
+    change = value[0][6]
+    return change
+
 #从数据库获取股票数据，统计想要查找日期的满足阳包阴并且当天涨停的股票
 def valid_stock(dates):
     # return yangbaoying(dates)
