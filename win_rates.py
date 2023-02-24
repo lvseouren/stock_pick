@@ -3,6 +3,8 @@ import datetime
 import os
 import re
 import time
+
+import openpyxl
 import tushare as ts
 import mysql.connector
 import constants
@@ -312,7 +314,37 @@ def cal_3yang_winrate_buy_before_n_day(n):
 	target_date_str = constants.get_date_str_for_filename(target_date)
 	cal_specific_day_3yang_winrate(target_date_str, constants.stock_filter_chuangyeban)
 
+def cal_3yang_winrate_of_all_days():
+	# 读取3yang excel data
+	# 统计总涨幅
+	filename = constants.ml_data_dir + constants.ml_excel_name
+	print(filename)
+	f = openpyxl.open(filename)
+	sheetname = constants.ml_sheetname_data_hushen
+	sheet = f[sheetname]
 
+	filename = constants.ml_report_dir + '交易以来总的盈利情况.txt'
+	fp = open(filename, 'w')
+
+	curr_times = 1
+	for row in range(2, sheet.max_row + 1):
+		date = sheet.cell(row, 1).value
+		code = sheet.cell(row, 2).value
+		name = sheet.cell(row, 3).value
+		change = sheet.cell(row, 20).value
+		if change < -20:
+			continue
+		print('%s %s %s 涨幅为：%s' %(date, code, name, change))
+		change = change * 0.01
+		change_factor = 1+change
+		curr_times = curr_times * change_factor
+		show_times = round(curr_times, 2)
+		str = '%s卖出[%s %s]后本金变为原来的%s倍' %(date, code, name, show_times)
+		print(str)
+		fp.write(str)
+	fp.close()
+
+cal_3yang_winrate_of_all_days()
 # realtime_overall_winrate()
 #rate('2018-03-16')
 # overall_cal_hold_n_day_winrate()
