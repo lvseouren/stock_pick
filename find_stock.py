@@ -14,6 +14,9 @@ def get_stock_industry(code):
     industry = value[0][2]
     return industry
 
+def get_sh_close_change(date):
+    return get_stock_close_change('sh', date)
+
 def get_stock_open_change(code, date):
     conn = mysql.connector.connect(user=constants.mysql_user, password=constants.mysql_password,
                                    database=constants.mysql_database_name)
